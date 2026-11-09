@@ -1,44 +1,38 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <link rel="manifest" href="manifest.json">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Монобанк — Банкир</title>
-    <!-- PWA и мобильное приложение -->
+  
+  <!-- PWA теги -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Монобанк">
   <meta name="theme-color" content="#21a038">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2321a038'/><text x='50%' y='55%' font-size='60' text-anchor='middle' dominant-baseline='middle' fill='white'>🏦</text></svg>">
+  <link rel="manifest" href="manifest.json">
+
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div class="app">
-      <!-- Фиксированная шапка -->
-  <div class="fixed-header">
-    <h1>Банкир 🏦</h1>
-    <div style="display:flex; gap:8px;">
-      <button class="theme-toggle" onclick="showRoomInfo()" style="font-size:16px;">🔑</button>
-      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
-    </div>
-  </div>
-
-  <div class="app">
-    <!-- Карточка баланса -->
-    <div class="card balance-card" id="mainBalanceCard">
-      <div class="balance-inner">
-        <div class="balance-avatar" id="myAvatar">🐱</div>
-        <div class="balance-label" id="myName">Твой счёт</div>
-        <div class="balance-amount"><span id="myBalance">0</span> <span class="cur">₽</span></div>
-        <div class="balance-room-code">Код: <b id="roomCode">—</b></div>
+    <div class="topbar">
+      <h1>Банкир 🏦</h1>
+      <div style="display:flex; gap:8px;">
+        <button class="theme-toggle" onclick="showRoomInfo()" style="font-size:16px;">🔑</button>
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
       </div>
     </div>
-    <!-- Остальной код... -->
-    <!-- Кнопка перевода наверху -->
+
+    <div class="card balance-card" style="margin-bottom:16px;">
+      <div style="font-size:40px; margin-bottom:8px;" id="myAvatar">🐱</div>
+      <div class="balance-label" id="myName">Твой счёт</div>
+      <div class="balance-amount"><span id="myBalance">0</span> <span class="cur">₽</span></div>
+      <div style="font-size:13px; color:var(--text-muted); margin-top:8px;">Код: <b id="roomCode">—</b></div>
+    </div>
+
     <button class="btn" onclick="openTransferModal()" style="margin-bottom:24px;">💸 Перевести деньги</button>
 
-    <!-- Вкладка 1: История -->
     <div id="tabHistoryContent">
       <div class="card">
         <h3 style="margin-bottom:12px; font-size:16px;">Все операции в комнате</h3>
@@ -46,7 +40,6 @@
       </div>
     </div>
 
-    <!-- Вкладка 2: Игроки -->
     <div id="tabPlayersContent" style="display:none;">
       <div class="card">
         <h3 style="margin-bottom:12px; font-size:16px;">Счета игроков</h3>
@@ -54,7 +47,6 @@
       </div>
     </div>
 
-    <!-- Вкладка 3: Настройки -->
     <div id="tabSettingsContent" style="display:none;">
       <div class="card" style="text-align:center; padding:30px;">
         <div style="font-size:48px; margin-bottom:16px;">⚙️</div>
@@ -65,7 +57,6 @@
     </div>
   </div>
 
-  <!-- Нижняя навигация -->
   <div class="bottom-nav">
     <div class="nav-item active" id="navHistory" onclick="switchTab('history')">
       <span class="nav-icon">📋</span> Операции
@@ -78,15 +69,14 @@
     </div>
   </div>
 
-  <!-- Модалки остаются без изменений -->
   <div class="modal-overlay" id="roomInfoModal" style="display:none;">
     <div class="modal" style="text-align:center;">
       <h3 style="margin-bottom:8px;">Доступ к игре</h3>
       <p style="font-size:14px; color:var(--text-muted); margin-bottom:16px;">Дайте эту информацию друзьям:</p>
       <div class="balance-label">Код комнаты</div>
-      <div class="room-code" id="modalRoomCode" style="font-size:32px; font-weight:800; letter-spacing:6px; color:var(--accent); margin:12px 0;">—</div>
+      <div class="room-code" id="modalRoomCode">—</div>
       <div class="balance-label">PIN</div>
-      <div class="room-code" id="modalRoomPin" style="font-size:32px; font-weight:800; letter-spacing:6px; color:var(--accent); margin:12px 0;">—</div>
+      <div class="room-code" id="modalRoomPin">—</div>
       <button class="btn" onclick="document.getElementById('roomInfoModal').style.display='none'">Закрыть</button>
     </div>
   </div>
@@ -95,7 +85,7 @@
     <div class="modal">
       <h3 style="margin-bottom:16px;" id="adjustTitle">Корректировка</h3>
       <div class="field">
-        <label>Сумма (минус — забрать в Банк, плюс — выдать из Банка)</label>
+        <label>Сумма (минус — в Банк, плюс — из Банка)</label>
         <input type="number" id="adjustAmount" placeholder="-500">
       </div>
       <div class="field">
@@ -116,7 +106,7 @@
       <h3 style="margin-bottom:16px;">Перевод (с личного счёта)</h3>
       <div class="field">
         <label>Кому перевести?</label>
-        <select id="transferTarget" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:16px;"></select>
+        <select id="transferTarget"></select>
       </div>
       <div class="field">
         <label>Сумма</label>
@@ -138,54 +128,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-client.js"></script>
   <script src="js/ui.js"></script>
-  <script src="js/banker.js?v=5"></script>
-    <script>
-  let ticking = false;
-  const card = document.getElementById('mainBalanceCard');
-  const avatar = card.querySelector('.balance-avatar');
-  const amount = card.querySelector('.balance-amount');
-  
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      window.requestAnimationFrame(() => {
-        if (card) {
-          if (window.scrollY > 30) {
-            card.classList.add('compact');
-            
-            // Плавно меняем текст по краям (без движения)
-            // Добавляем мини-баланс слева
-            if(!document.getElementById('miniAvatar')) {
-              const span = document.createElement('span');
-              span.id = 'miniAvatar';
-              span.style.cssText = 'position:absolute; left:20px; top:50%; transform:translateY(-50%); font-size:26px; opacity:0; transition:opacity 0.3s;';
-              span.textContent = avatar.textContent;
-              card.appendChild(span);
-              
-              const span2 = document.createElement('span');
-              span2.id = 'miniBalance';
-              span2.style.cssText = 'position:absolute; right:20px; top:50%; transform:translateY(-50%); font-size:24px; font-weight:800; opacity:0; transition:opacity 0.3s;';
-              span2.textContent = amount.textContent;
-              card.appendChild(span2);
-            }
-            
-            // Проявляем
-            document.getElementById('miniAvatar').style.opacity = '1';
-            document.getElementById('miniBalance').style.opacity = '1';
-            
-          } else {
-            card.classList.remove('compact');
-            // Прячем
-            if(document.getElementById('miniAvatar')) {
-               document.getElementById('miniAvatar').style.opacity = '0';
-               document.getElementById('miniBalance').style.opacity = '0';
-            }
-          }
-        }
-        ticking = false;
-      });
-      ticking = true;
-    }
-  });
-</script>
+  <script src="js/banker.js?v=12"></script>
 </body>
 </html>
