@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Монобанк — Игрок</title>
   
+  <!-- PWA теги -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Монобанк">
@@ -15,22 +16,16 @@
 </head>
 <body>
   <div class="app">
-      <!-- Фиксированная шапка -->
-  <div class="fixed-header">
-    <h1>Монобанк 🏦</h1>
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
-  </div>
-
-  <div class="app">
-    <!-- Карточка баланса -->
-    <div class="card balance-card" id="mainBalanceCard">
-      <div class="balance-inner">
-        <div class="balance-avatar" id="myAvatar">🐱</div>
-        <div class="balance-label">Твой баланс</div>
-        <div class="balance-amount"><span id="myBalance">0</span> <span class="cur">₽</span></div>
-      </div>
+    <div class="topbar">
+      <h1>Монобанк 🏦</h1>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
     </div>
-    <!-- Остальной код (кнопки, история и т.д.) остается без изменений -->
+
+    <div class="card balance-card" style="margin-bottom:16px;">
+      <div style="font-size:40px; margin-bottom:8px;" id="myAvatar">🐱</div>
+      <div class="balance-label">Твой баланс</div>
+      <div class="balance-amount"><span id="myBalance">0</span> <span class="cur">₽</span></div>
+    </div>
 
     <button class="btn" onclick="openTransferModal()" style="margin-bottom:24px;">💸 Перевести деньги</button>
 
@@ -75,7 +70,7 @@
       <h3 style="margin-bottom:16px;">Перевод</h3>
       <div class="field">
         <label>Кому перевести?</label>
-        <select id="transferTarget" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:16px;"></select>
+        <select id="transferTarget"></select>
       </div>
       <div class="field">
         <label>Сумма</label>
@@ -100,54 +95,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-client.js"></script>
   <script src="js/ui.js"></script>
-  <script src="js/player.js?v=9"></script>
-    <script>
-  let ticking = false;
-  const card = document.getElementById('mainBalanceCard');
-  const avatar = card.querySelector('.balance-avatar');
-  const amount = card.querySelector('.balance-amount');
-  
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      window.requestAnimationFrame(() => {
-        if (card) {
-          if (window.scrollY > 30) {
-            card.classList.add('compact');
-            
-            // Плавно меняем текст по краям (без движения)
-            // Добавляем мини-баланс слева
-            if(!document.getElementById('miniAvatar')) {
-              const span = document.createElement('span');
-              span.id = 'miniAvatar';
-              span.style.cssText = 'position:absolute; left:20px; top:50%; transform:translateY(-50%); font-size:26px; opacity:0; transition:opacity 0.3s;';
-              span.textContent = avatar.textContent;
-              card.appendChild(span);
-              
-              const span2 = document.createElement('span');
-              span2.id = 'miniBalance';
-              span2.style.cssText = 'position:absolute; right:20px; top:50%; transform:translateY(-50%); font-size:24px; font-weight:800; opacity:0; transition:opacity 0.3s;';
-              span2.textContent = amount.textContent;
-              card.appendChild(span2);
-            }
-            
-            // Проявляем
-            document.getElementById('miniAvatar').style.opacity = '1';
-            document.getElementById('miniBalance').style.opacity = '1';
-            
-          } else {
-            card.classList.remove('compact');
-            // Прячем
-            if(document.getElementById('miniAvatar')) {
-               document.getElementById('miniAvatar').style.opacity = '0';
-               document.getElementById('miniBalance').style.opacity = '0';
-            }
-          }
-        }
-        ticking = false;
-      });
-      ticking = true;
-    }
-  });
-</script>
+  <script src="js/player.js?v=12"></script>
 </body>
 </html>
