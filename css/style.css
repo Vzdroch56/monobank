@@ -1,7 +1,6 @@
 :root {
   --bg: #f2f5f2;
-  /* Плавный градиент сверху вниз */
-  --bg-gradient: linear-gradient(180deg, #dce4dc 0%, #f2f5f2 30%, #f2f5f2 100%);
+  --bg-gradient: linear-gradient(180deg, #e2e8e2 0%, #f2f5f2 30%, #f2f5f2 100%);
   --card: rgba(255, 255, 255, 0.75);
   --text: #0f1410;
   --text-muted: #6b756b;
@@ -45,12 +44,10 @@ body {
 .app {
   width: 100%;
   max-width: 480px;
-  /* Отступ сверху равен высоте шапки + высоте карточки */
-  padding: 60px 10px 120px; 
+  padding: 70px 10px 120px; 
   position: relative;
 }
 
-/* --- ШАПКА (ПРОЗРАЧНАЯ) --- */
 .fixed-header {
   position: fixed;
   top: 0;
@@ -63,7 +60,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* Убрали фон и тень, чтобы градиент плавно перетекал */
+  background: transparent;
 }
 .fixed-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
 .theme-toggle {
@@ -78,13 +75,25 @@ body {
   backdrop-filter: blur(10px);
 }
 
-/* --- КАРТОЧКА БАЛАНСА (FIXED) --- */
+/* Общие карточки */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* --- КАРТОЧКА БАЛАНСА (FIXED + АНИМАЦИЯ) --- */
 .balance-card {
   position: fixed;
-  top: 70px; /* Отступ от верха */
+  top: 55px; /* Расстояние от шапки */
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 20px); /* Чуть уже экрана (по 10px с боков) */
+  width: calc(100% - 20px);
   max-width: 460px;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(200, 205, 200, 0.6) 100%);
   border: 1px solid rgba(255, 255, 255, 0.8);
@@ -92,17 +101,16 @@ body {
   z-index: 90;
   overflow: hidden;
   box-shadow: var(--shadow-active);
-  /* Сделали чуть выше (180px) */
   height: 180px;
-  /* Плавный переход для смены высоты при скролле */
-  transition: height 0.2s ease, top 0.2s ease, padding 0.2s ease;
+  transition: height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), 
+              top 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), 
+              box-shadow 0.3s ease;
 }
 [data-theme="dark"] .balance-card {
   background: linear-gradient(135deg, rgba(26, 33, 26, 0.9) 0%, rgba(15, 20, 15, 0.7) 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Контейнер с абсолютным позиционированием */
 .balance-inner {
   position: relative;
   width: 100%;
@@ -114,22 +122,22 @@ body {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   text-align: center;
   white-space: nowrap;
 }
 
-/* Положение в обычном состоянии */
+/* В обычном состоянии */
 .balance-avatar { top: 24px; font-size: 48px; line-height: 1; }
 .balance-label { top: 82px; font-size: 14px; color: var(--text-muted); }
 .balance-amount { top: 102px; font-size: 46px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); }
 .balance-amount .cur { font-size: 24px; font-weight: 600; opacity: 0.6; }
 .balance-room-code { top: 156px; font-size: 13px; color: var(--text-muted); }
 
-/* Сжатое состояние (СРАБАТЫВАЕТ ПРИ СКРОЛЛЕ) */
+/* Сжатое состояние */
 .balance-card.compact {
   height: 64px;
-  top: 60px;
+  top: 70px; /* Чуть опускается при скролле, чтобы компенсировать сжатие */
 }
 .balance-card.compact .balance-avatar {
   left: 20px;
@@ -149,34 +157,24 @@ body {
 .balance-card.compact .balance-room-code {
   opacity: 0;
   pointer-events: none;
-  transform: translate(-50%, -50%); /* Чтобы они не мешали */
 }
 
-/* --- ОСТАЛЬНЫЕ СТИЛИ --- */
-.card {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 20px;
-  box-shadow: var(--shadow);
-  margin-bottom: 12px;
-  border: 1px solid var(--border);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-/* Сдвигаем контент, чтобы он был под фиксированной карточкой */
+/* --- ОБЕРТКА КОНТЕНТА --- */
+/* Эта штука сдвигает кнопки и списки вниз, чтобы они не прятались за карточкой */
 .main-content {
-  margin-top: 200px; 
-  transition: margin-top 0.2s ease;
+  margin-top: 195px; /* 180px высота карточки + 15px отступ */
+  transition: margin-top 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .main-content.compact {
-  margin-top: 80px;
+  margin-top: 80px; /* Сдвигается наверх, когда карточка сжалась */
 }
 
+/* Остальные стили (без изменений) */
 .btn { display: block; width: 100%; padding: 16px; border: none; border-radius: 16px; background: var(--accent); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 12px; box-shadow: 0 4px 12px rgba(33,160,56,0.3); }
 .btn:active { transform: scale(0.98); background: var(--accent-dark); box-shadow: none; }
 .btn.secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); box-shadow: var(--shadow); }
 .btn.secondary:active { background: var(--bg); }
+.btn.danger { background: var(--danger); box-shadow: 0 4px 12px rgba(211,47,47,0.3); }
 
 .field { margin-bottom: 14px; }
 .field label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
