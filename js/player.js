@@ -73,40 +73,34 @@ function renderHistory() {
   
   if (!allTxs || allTxs.length === 0) { list.innerHTML = '<div class="empty">Пока нет операций</div>'; return; }
 
-  // Фильтруем: показываем ВСЁ, что связано с банком ИЛИ личные переводы
-  const visibleTxs = allTxs.filter(tx => {
-    const isBankRelated = tx.from_player === null || tx.to_player === null;
-    const isMyTx = tx.from_player === session.player_id || tx.to_player === session.player_id;
-    return isBankRelated || isMyTx;
-  });
-
-  list.innerHTML = visibleTxs.map(tx => {
+  // Показываем ВСЕ операции без фильтрации, чтобы все видели, что происходит с Банком
+  list.innerHTML = allTxs.map(tx => {
     const isIncoming = tx.to_player === session.player_id;
     const isOutgoing = tx.from_player === session.player_id;
     
     let title = '', icon = '', amountClass = '', sign = '';
+    
+    // Находим участников транзакции
+    const fromP = tx.from_player ? allPlayers.find(p => p.id === tx.from_player) : null;
+    const toP = tx.to_player ? allPlayers.find(p => p.id === tx.to_player) : null;
 
     if (tx.from_player === null && isIncoming) {
       title = 'Пополнение от Банка'; icon = '🏦'; amountClass = 'in'; sign = '+';
     } else if (isOutgoing && tx.to_player === null) {
       title = 'Перевод в Банк'; icon = '🏦'; amountClass = 'out'; sign = '-';
     } else if (isIncoming) {
-      const fromP = allPlayers.find(p => p.id === tx.from_player);
       title = fromP ? `От ${fromP.name}` : 'Перевод';
       icon = '↙️'; amountClass = 'in'; sign = '+';
     } else if (isOutgoing) {
-      const toP = allPlayers.find(p => p.id === tx.to_player);
       if (toP && toP.is_bank_account) { title = 'В Банк'; icon = '🏦'; }
       else { title = toP ? `Для ${toP.name}` : 'Перевод'; icon = '↗️'; }
       amountClass = 'out'; sign = '-';
     } else {
-      // Чужая операция с банком (например, банкир выдал зарплату Васе)
-      const fromP = tx.from_player ? allPlayers.find(p => p.id === tx.from_player) : null;
-      const toP = tx.to_player ? allPlayers.find(p => p.id === tx.to_player) : null;
-      title = fromP ? `Банк → ${fromP.name}` : `Банк → ${toP.name}`; // Логика для чужих
-      if (!fromP) title = `Банк → ${toP.name}`;
-      if (!toP) title = `${fromP.name} → Банк`;
-      icon = '🏦'; amountClass = 'out'; sign = '';
+      // Если операция не наша и не в наш адрес — значит, это операция банка с кем-то другим
+      if (!fromP && toP) { title = `Банк → ${toP.name}`; icon = '🏦'; amountClass = 'out'; }
+      else if (fromP && !toP) { title = `${fromP.name} → Банк`; icon = '🏦'; amountClass = 'in'; }
+      else if (fromP && toP) { title = `${fromP.name} → ${toP.name}`; icon = '💸'; }
+      sign = ''; // Не ставим плюс/минус, так как это не наш баланс
     }
 
     const commentHtml = tx.comment ? `<div class="tx-comment">${esc(tx.comment)}</div>` : '';
@@ -118,7 +112,9 @@ function renderHistory() {
           <div class="tx-title">${esc(title)}</div>
           ${commentHtml}
         </div>
-        <div class="tx-amount ${amountClass}">${sign}${fmtMoney(tx.amount)} ₽</div>
+        <div class="tx-amount ${amountClass}" style="color: ${isIncoming || isOutgoing ? '' : 'var(--text-muted)'}">
+          ${sign}${fmtMoney(tx.amount)} ₽
+        </div>
       </div>
     `;
   }).join('');
