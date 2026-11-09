@@ -41,11 +41,11 @@ body {
   transition: background 0.3s, color 0.3s;
 }
 
-/* Уменьшили отступ сверху, чтобы карточка была ближе к шапке */
+/* Привязываем верхний отступ так, чтобы под шапкой было ~25px */
 .app {
   width: 100%;
   max-width: 480px;
-  padding: 60px 10px 120px; 
+  padding: 85px 10px 130px; 
   position: relative;
 }
 
@@ -87,76 +87,64 @@ body {
   -webkit-backdrop-filter: blur(16px);
 }
 
-/* --- КАРТОЧКА БАЛАНСА (STICKY БЕЗ TRANSITION) --- */
+/* --- КАРТОЧКА БАЛАНСА --- */
 .balance-card {
   position: sticky;
-  top: 55px; /* Ближе к шапке */
+  top: 85px; /* 20-25px от низа шапки */
   z-index: 10;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(200, 205, 200, 0.6) 100%);
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow-active);
-  /* Высота по умолчанию */
-  height: 170px;
-  /* Убрали transition для height и top, теперь JS будет двигать их напрямую */
+  height: 160px;
   margin-bottom: 16px;
   will-change: height, top;
+  /* Убрали transition для top, JS будет управлять */
 }
 [data-theme="dark"] .balance-card {
   background: linear-gradient(135deg, rgba(26, 33, 26, 0.9) 0%, rgba(15, 20, 15, 0.7) 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Используем flex для идеальной центровки */
 .balance-inner {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
+  gap: 4px; /* Отступ между элементами */
 }
 
-/* Элементы (подняли чуть выше для центровки) */
-.balance-avatar, .balance-label, .balance-amount, .balance-room-code {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  transition: all 0.2s ease; /* Плавность для цвета/размера */
-  text-align: center;
-  white-space: nowrap;
-}
-
-.balance-avatar { top: 20px; font-size: 48px; line-height: 1; }
-.balance-label { top: 76px; font-size: 14px; color: var(--text-muted); }
-.balance-amount { top: 94px; font-size: 46px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); }
+.balance-avatar { font-size: 48px; line-height: 1; }
+.balance-label { font-size: 14px; color: var(--text-muted); }
+.balance-amount { font-size: 46px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); line-height: 1; }
 .balance-amount .cur { font-size: 24px; font-weight: 600; opacity: 0.6; }
-.balance-room-code { top: 146px; font-size: 13px; color: var(--text-muted); }
+.balance-room-code { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
 
-/* Сжатое состояние (вызывается JS) */
-.balance-card.compact {
-  /* height: 64px; - задается через JS */
-  /* top: 50px; - задается через JS */
-  margin-bottom: 12px;
+/* --- СЖАТОЕ СОСТОЯНИЕ (плавно управляется JS) --- */
+.balance-card.compact .balance-inner {
+  flex-direction: row;
+  justify-content: space-between; /* Разъезжаются по краям */
+  padding: 0 20px;
 }
 .balance-card.compact .balance-avatar {
-  left: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 26px;
+  font-size: 26px; /* Уменьшаем */
+  margin: 0;
 }
 .balance-card.compact .balance-amount {
-  left: auto;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 22px;
+  font-size: 24px;
   letter-spacing: 0;
+  margin: 0;
 }
 .balance-card.compact .balance-label,
 .balance-card.compact .balance-room-code {
-  opacity: 0;
-  pointer-events: none;
+  display: none; /* Скрываем лишнее */
 }
 
-/* Остальные стили без изменений... */
+/* Остальные стили... */
 .btn { display: block; width: 100%; padding: 16px; border: none; border-radius: 16px; background: var(--accent); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 12px; box-shadow: 0 4px 12px rgba(33,160,56,0.3); }
 .btn:active { transform: scale(0.98); background: var(--accent-dark); box-shadow: none; }
 .btn.secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); box-shadow: var(--shadow); }
@@ -200,6 +188,7 @@ body {
 .modal { background: var(--bg); width: 100%; max-width: 480px; border-radius: 28px 28px 0 0; padding: 24px 20px 32px; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
+/* --- ОБЛАЧКО (УВЕЛИЧЕНО) --- */
 .bottom-nav {
   position: fixed;
   bottom: 20px;
@@ -211,7 +200,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 24px;
   display: flex;
-  padding: 8px;
+  padding: 14px 8px; /* Увеличили высоту */
   z-index: 50;
   box-shadow: var(--nav-glow);
   backdrop-filter: blur(20px);
@@ -221,7 +210,7 @@ body {
   background: linear-gradient(135deg, rgba(26, 33, 26, 0.8) 0%, rgba(15, 20, 15, 0.6) 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
-.nav-item { flex: 1; text-align: center; font-size: 11px; color: var(--text-muted); cursor: pointer; padding: 8px 0; border-radius: 16px; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.nav-item .nav-icon { font-size: 22px; margin-bottom: 2px; transition: transform 0.2s; }
+.nav-item { flex: 1; text-align: center; font-size: 12px; color: var(--text-muted); cursor: pointer; padding: 4px 0; border-radius: 16px; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.nav-item .nav-icon { font-size: 24px; margin-bottom: 4px; transition: transform 0.2s; }
 .nav-item.active { color: var(--accent); font-weight: 600; }
 .nav-item.active .nav-icon { transform: scale(1.1) translateY(-2px); }
