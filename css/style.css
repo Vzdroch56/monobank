@@ -41,7 +41,7 @@ body {
   transition: background 0.3s, color 0.3s;
 }
 
-/* Уменьшили верхний отступ (60px), чтобы карточка была выше */
+/* Верхний отступ 60px, чтобы карточка была выше */
 .app {
   width: 100%;
   max-width: 480px;
@@ -87,18 +87,18 @@ body {
   -webkit-backdrop-filter: blur(16px);
 }
 
-/* --- КАРТОЧКА БАЛАНСА --- */
+/* --- КАРТОЧКА БАЛАНСА (ВЫСОКАЯ И БЛИЗКО К ШАПКЕ) --- */
 .balance-card {
   position: sticky;
-  top: 60px; /* Теперь она в 60 пикселях от верха (ближе к шапке) */
+  top: 60px; /* Прилипает прямо под шапкой */
   z-index: 10;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(200, 205, 200, 0.6) 100%);
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow-active);
-  height: 270px; 
-  transition: height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  height: 280px; /* Огромная высота */
+  transition: height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.3s ease;
   margin-bottom: 16px;
 }
 [data-theme="dark"] .balance-card {
@@ -120,13 +120,13 @@ body {
   white-space: nowrap;
 }
 
-.balance-avatar { font-size: 52px; line-height: 1; margin-top: -50px; }
+.balance-avatar { font-size: 52px; line-height: 1; margin-top: -55px; }
 .balance-label { font-size: 14px; color: var(--text-muted); position: absolute; top: 42%; left: 50%; transform: translate(-50%, -50%); transition: all 0.3s; }
 .balance-amount { font-size: 48px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); line-height: 1; margin-top: 25px; }
 .balance-amount .cur { font-size: 24px; font-weight: 600; opacity: 0.6; }
 .balance-room-code { font-size: 13px; color: var(--text-muted); position: absolute; top: 82%; left: 50%; transform: translate(-50%, -50%); transition: all 0.3s; }
 
-/* Сжатое состояние */
+/* Сжатое состояние (JS добавляет класс compact) */
 .balance-card.compact {
   height: 80px;
   top: 50px;
@@ -147,7 +147,7 @@ body {
   transform: translate(calc(-50% + 110px), -50%);
 }
 
-/* --- НИЖНИЙ БАР (ВЫШЕ, УВЕЛИЧЕН) --- */
+/* --- НИЖНИЙ БАР (РЕАЛЬНО ВЫСОКИЙ) --- */
 .bottom-nav {
   position: fixed;
   bottom: 20px;
@@ -157,9 +157,9 @@ body {
   max-width: 400px;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(200, 205, 200, 0.6) 100%);
   border: 1px solid rgba(255, 255, 255, 0.7);
-  border-radius: 26px;
+  border-radius: 28px;
   display: flex;
-  padding: 20px 12px; /* УВЕЛИЧИЛИ ВЫСОТУ БАРА */
+  padding: 24px 12px; /* БОЛЬШАЯ ВЫСОТА */
   z-index: 50;
   box-shadow: var(--nav-glow);
   backdrop-filter: blur(20px);
@@ -170,7 +170,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 .nav-item { flex: 1; text-align: center; font-size: 13px; color: var(--text-muted); cursor: pointer; padding: 4px 0; border-radius: 16px; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.nav-item .nav-icon { font-size: 26px; margin-bottom: 6px; transition: transform 0.2s; }
+.nav-item .nav-icon { font-size: 28px; margin-bottom: 6px; transition: transform 0.2s; }
 .nav-item.active { color: var(--accent); font-weight: 600; }
 .nav-item.active .nav-icon { transform: scale(1.1) translateY(-2px); }
 
