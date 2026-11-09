@@ -44,7 +44,7 @@ body {
 .app {
   width: 100%;
   max-width: 480px;
-  padding: 85px 10px 140px; /* Увеличили нижний отступ под большое облачко */
+  padding: 85px 10px 120px; 
   position: relative;
 }
 
@@ -86,7 +86,7 @@ body {
   -webkit-backdrop-filter: blur(16px);
 }
 
-/* --- КАРТОЧКА БАЛАНСА (185px) --- */
+/* --- КАРТОЧКА БАЛАНСА (БЕЗ FLEX-ПРЫЖКОВ) --- */
 .balance-card {
   position: sticky;
   top: 85px; 
@@ -96,7 +96,7 @@ body {
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow-active);
-  height: 185px; /* Сделали выше */
+  height: 185px; 
   margin-bottom: 16px;
   will-change: height, top;
 }
@@ -105,48 +105,68 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Контейнер */
 .balance-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
-  gap: 6px; /* Чуть больше отступ между строками */
 }
 
-/* Убираем абсолютное позиционирование, чтобы всё встало по центру */
-.balance-avatar { font-size: 48px; line-height: 1; }
-.balance-label { font-size: 14px; color: var(--text-muted); }
-.balance-amount { font-size: 42px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); line-height: 1; }
+/* Общие стили для элементов */
+.balance-avatar, .balance-amount {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  /* Центрируем и задаем плавный переход */
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s linear, font-size 0.1s linear, opacity 0.1s linear;
+  white-space: nowrap;
+}
+
+.balance-avatar { font-size: 48px; line-height: 1; z-index: 2; }
+.balance-label { font-size: 14px; color: var(--text-muted); position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); transition: opacity 0.1s; }
+.balance-amount { font-size: 42px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); line-height: 1; z-index: 1; margin-top: 30px; }
 .balance-amount .cur { font-size: 22px; font-weight: 600; opacity: 0.6; }
-.balance-room-code { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+.balance-room-code { font-size: 13px; color: var(--text-muted); position: absolute; top: 80%; left: 50%; transform: translate(-50%, -50%); transition: opacity 0.1s; }
 
-/* --- СЖАТОЕ СОСТОЯНИЕ (ПЛАВНЫЙ РАЗЪЕЗД) --- */
-.balance-card.compact .balance-inner {
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 0 20px;
-}
-.balance-card.compact .balance-avatar {
-  font-size: 26px;
-  margin: 0;
-  /* Сдвигаем влево */
-  transform: translateX(-10px); 
-}
-.balance-card.compact .balance-amount {
-  font-size: 24px;
-  letter-spacing: 0;
-  margin: 0;
-  /* Сдвигаем вправо */
-  transform: translateX(10px); 
-}
+/* При скролле JS сам будет двигать элементы и скрывать лишнее через opacity */
 .balance-card.compact .balance-label,
 .balance-card.compact .balance-room-code {
-  display: none; 
+  opacity: 0;
 }
 
-/* Остальные стили */
+/* --- НИЖНИЙ БАР (ВЕРНУЛИ КАК БЫЛО) --- */
+.bottom-nav {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 24px);
+  max-width: 400px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(200, 205, 200, 0.5) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 24px;
+  display: flex;
+  padding: 10px 8px; /* Вернули компактный размер */
+  z-index: 50;
+  box-shadow: var(--nav-glow);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+[data-theme="dark"] .bottom-nav {
+  background: linear-gradient(135deg, rgba(26, 33, 26, 0.8) 0%, rgba(15, 20, 15, 0.6) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.nav-item { flex: 1; text-align: center; font-size: 11px; color: var(--text-muted); cursor: pointer; padding: 6px 0; border-radius: 16px; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.nav-item .nav-icon { font-size: 22px; margin-bottom: 2px; transition: transform 0.2s; }
+.nav-item.active { color: var(--accent); font-weight: 600; }
+.nav-item.active .nav-icon { transform: scale(1.1) translateY(-2px); }
+
+/* Остальное без изменений */
 .btn { display: block; width: 100%; padding: 16px; border: none; border-radius: 16px; background: var(--accent); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 12px; box-shadow: 0 4px 12px rgba(33,160,56,0.3); }
 .btn:active { transform: scale(0.98); background: var(--accent-dark); box-shadow: none; }
 .btn.secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); box-shadow: var(--shadow); }
@@ -189,30 +209,3 @@ body {
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: flex-end; justify-content: center; z-index: 200; backdrop-filter: blur(4px); }
 .modal { background: var(--bg); width: 100%; max-width: 480px; border-radius: 28px 28px 0 0; padding: 24px 20px 32px; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-/* --- ОБЛАЧКО (УВЕЛИЧЕНО В 1.5 РАЗА) --- */
-.bottom-nav {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 24px);
-  max-width: 400px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(200, 205, 200, 0.5) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 28px; /* Чуть больше скругление */
-  display: flex;
-  padding: 18px 12px; /* Высота увеличена в 1.5 раза */
-  z-index: 50;
-  box-shadow: var(--nav-glow);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-[data-theme="dark"] .bottom-nav {
-  background: linear-gradient(135deg, rgba(26, 33, 26, 0.8) 0%, rgba(15, 20, 15, 0.6) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-.nav-item { flex: 1; text-align: center; font-size: 13px; color: var(--text-muted); cursor: pointer; padding: 4px 0; border-radius: 16px; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.nav-item .nav-icon { font-size: 26px; margin-bottom: 6px; transition: transform 0.2s; }
-.nav-item.active { color: var(--accent); font-weight: 600; }
-.nav-item.active .nav-icon { transform: scale(1.1) translateY(-2px); }
