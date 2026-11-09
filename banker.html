@@ -145,7 +145,7 @@
   const avatar = card.querySelector('.balance-avatar');
   const amount = card.querySelector('.balance-amount');
   
-  const maxScroll = 120; // Дистанция скролла для полного сжатия
+  const maxScroll = 150; // Дистанция скролла для полного сворачивания
   const startTop = 85;
   const endTop = 75;
 
@@ -156,41 +156,53 @@
           const scrollY = window.scrollY;
           
           if (scrollY <= 0) {
+            // Развернутое состояние
             card.classList.remove('compact');
             card.style.height = '185px';
             card.style.top = `${startTop}px`;
+            
+            // Сбрасываем позиции в центр
             avatar.style.fontSize = '48px';
-            avatar.style.transform = 'translateX(0)';
+            avatar.style.transform = 'translate(-50%, -50%)';
+            
             amount.style.fontSize = '42px';
-            amount.style.transform = 'translateX(0)';
+            amount.style.marginTop = '30px';
+            amount.style.transform = 'translate(-50%, -50%)';
+            
           } 
           else if (scrollY < maxScroll) {
-            const progress = scrollY / maxScroll; // от 0 до 1
+            // Промежуточное состояние (плавно едет)
+            const progress = scrollY / maxScroll; 
             
-            // Высота: от 185 до 64
-            card.style.height = `${185 - (121 * progress)}px`;
+            card.style.height = `${185 - (120 * progress)}px`;
             card.style.top = `${startTop - (10 * progress)}px`;
             
-            // Шрифты: плавно уменьшаются
+            // Шрифты уменьшаются
             avatar.style.fontSize = `${48 - (22 * progress)}px`;
             amount.style.fontSize = `${42 - (18 * progress)}px`;
             
-            // Разъезд по сторонам: плавно уходят влево и вправо (максимум на 15px)
-            const shift = progress * 15;
-            avatar.style.transform = `translateX(${-shift}px)`;
-            amount.style.transform = `translateX(${shift}px)`;
+            // Разъезд от центра (сдвиг влево и вправо)
+            const shift = progress * 90; // до 90 пикселей в стороны
             
-            if (progress > 0.3) card.classList.add('compact');
-            else card.classList.remove('compact');
+            // Аватарка едет влево от центра
+            avatar.style.transform = `translate(calc(-50% - ${shift}px), -50%)`;
+            
+            // Баланс едет вправо от центра и поднимается
+            amount.style.transform = `translate(calc(-50% + ${shift}px), -50%)`;
+            amount.style.marginTop = `${30 - (30 * progress)}px`; 
             
           } else {
+            // Полностью свернуто
             card.classList.add('compact');
             card.style.height = '64px';
             card.style.top = `${endTop}px`;
+            
             avatar.style.fontSize = '26px';
-            avatar.style.transform = 'translateX(-15px)';
+            avatar.style.transform = 'translate(calc(-50% - 90px), -50%)';
+            
             amount.style.fontSize = '24px';
-            amount.style.transform = 'translateX(15px)';
+            amount.style.marginTop = '0';
+            amount.style.transform = 'translate(calc(-50% + 90px), -50%)';
           }
         }
         ticking = false;
