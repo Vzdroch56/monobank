@@ -145,7 +145,7 @@
   const avatar = card.querySelector('.balance-avatar');
   const amount = card.querySelector('.balance-amount');
   
-  const maxScroll = 150; // Дистанция скролла для полного сворачивания
+  const maxScroll = 150; 
   const startTop = 85;
   const endTop = 75;
 
@@ -156,53 +156,51 @@
           const scrollY = window.scrollY;
           
           if (scrollY <= 0) {
-            // Развернутое состояние
             card.classList.remove('compact');
-            card.style.height = '185px';
+            card.style.height = '210px'; // Высота
             card.style.top = `${startTop}px`;
             
-            // Сбрасываем позиции в центр
-            avatar.style.fontSize = '48px';
+            avatar.style.fontSize = '50px';
             avatar.style.transform = 'translate(-50%, -50%)';
+            avatar.style.marginTop = '-30px';
             
-            amount.style.fontSize = '42px';
-            amount.style.marginTop = '30px';
+            amount.style.fontSize = '44px';
             amount.style.transform = 'translate(-50%, -50%)';
+            amount.style.marginTop = '40px';
             
           } 
           else if (scrollY < maxScroll) {
-            // Промежуточное состояние (плавно едет)
             const progress = scrollY / maxScroll; 
             
-            card.style.height = `${185 - (120 * progress)}px`;
+            card.style.height = `${210 - (140 * progress)}px`; // Плавно уменьшается
             card.style.top = `${startTop - (10 * progress)}px`;
             
-            // Шрифты уменьшаются
-            avatar.style.fontSize = `${48 - (22 * progress)}px`;
-            amount.style.fontSize = `${42 - (18 * progress)}px`;
+            avatar.style.fontSize = `${50 - (24 * progress)}px`;
+            amount.style.fontSize = `${44 - (20 * progress)}px`;
             
-            // Разъезд от центра (сдвиг влево и вправо)
-            const shift = progress * 90; // до 90 пикселей в стороны
+            // Сдвиг от центра
+            const shift = progress * 110; 
             
-            // Аватарка едет влево от центра
+            // Убираем отступы по вертикали для плавности
+            avatar.style.marginTop = `${-30 + (30 * progress)}px`;
+            amount.style.marginTop = `${40 - (40 * progress)}px`;
+            
+            // Двигаем в стороны
             avatar.style.transform = `translate(calc(-50% - ${shift}px), -50%)`;
-            
-            // Баланс едет вправо от центра и поднимается
             amount.style.transform = `translate(calc(-50% + ${shift}px), -50%)`;
-            amount.style.marginTop = `${30 - (30 * progress)}px`; 
             
           } else {
-            // Полностью свернуто
             card.classList.add('compact');
-            card.style.height = '64px';
+            card.style.height = '70px'; // Итоговая высота
             card.style.top = `${endTop}px`;
             
             avatar.style.fontSize = '26px';
-            avatar.style.transform = 'translate(calc(-50% - 90px), -50%)';
+            avatar.style.marginTop = '0px';
+            avatar.style.transform = 'translate(calc(-50% - 110px), -50%)';
             
             amount.style.fontSize = '24px';
-            amount.style.marginTop = '0';
-            amount.style.transform = 'translate(calc(-50% + 90px), -50%)';
+            amount.style.marginTop = '0px';
+            amount.style.transform = 'translate(calc(-50% + 110px), -50%)';
           }
         }
         ticking = false;
