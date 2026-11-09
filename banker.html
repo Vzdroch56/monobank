@@ -139,5 +139,18 @@
   <script src="js/supabase-client.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/banker.js?v=5"></script>
+  <script>
+  window.addEventListener('scroll', () => {
+    const card = document.getElementById('mainBalanceCard');
+    if (!card) return;
+    
+    // Если прокрутили больше 40 пикселей, сжимаем карточку
+    if (window.scrollY > 40) {
+      card.classList.add('compact');
+    } else {
+      card.classList.remove('compact');
+    }
+  });
+</script>
 </body>
 </html>
