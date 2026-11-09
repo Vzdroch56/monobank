@@ -44,7 +44,7 @@ body {
 .app {
   width: 100%;
   max-width: 480px;
-  padding: 85px 10px 100px; /* Отступ снизу для бара */
+  padding: 85px 10px 100px;
   position: relative;
 }
 
@@ -86,7 +86,6 @@ body {
   -webkit-backdrop-filter: blur(16px);
 }
 
-/* --- КАРТОЧКА БАЛАНСА (БОЛЬШАЯ) --- */
 .balance-card {
   position: sticky;
   top: 85px; 
@@ -96,7 +95,7 @@ body {
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow-active);
-  height: 210px; /* СДЕЛАЛИ БОЛЬШЕ ПО ВЫСОТЕ */
+  height: 185px; /* Комфортная высота */
   margin-bottom: 16px;
   will-change: height, top;
 }
@@ -105,36 +104,33 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Центрируем контент */
 .balance-inner {
   position: relative;
   width: 100%;
   height: 100%;
 }
 
-/* Общие стили */
 .balance-avatar, .balance-amount {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  transition: transform 0.05s linear, font-size 0.05s linear, opacity 0.05s linear;
+  transition: transform 0.05s linear, font-size 0.05s linear;
   white-space: nowrap;
 }
 
-/* Начальные позиции (по центру) */
-.balance-avatar { font-size: 50px; line-height: 1; z-index: 2; margin-top: -30px; }
-.balance-label { font-size: 14px; color: var(--text-muted); position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%); transition: opacity 0.05s; }
-.balance-amount { font-size: 44px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); line-height: 1; z-index: 1; margin-top: 40px; }
-.balance-amount .cur { font-size: 24px; font-weight: 600; opacity: 0.6; }
-.balance-room-code { font-size: 13px; color: var(--text-muted); position: absolute; top: 75%; left: 50%; transform: translate(-50%, -50%); transition: opacity 0.05s; }
+.balance-avatar { font-size: 48px; line-height: 1; margin-top: -20px; }
+.balance-label { font-size: 14px; color: var(--text-muted); position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); transition: opacity 0.05s; }
+.balance-amount { font-size: 42px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); line-height: 1; margin-top: 30px; }
+.balance-amount .cur { font-size: 22px; font-weight: 600; opacity: 0.6; }
+.balance-room-code { font-size: 13px; color: var(--text-muted); position: absolute; top: 78%; left: 50%; transform: translate(-50%, -50%); transition: opacity 0.05s; }
 
 .balance-card.compact .balance-label,
 .balance-card.compact .balance-room-code {
   opacity: 0;
 }
 
-/* --- НИЖНИЙ БАР (УМЕНЬШЕН В 1.5 РАЗА) --- */
+/* Уменьшенный бар */
 .bottom-nav {
   position: fixed;
   bottom: 20px;
@@ -146,7 +142,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 20px;
   display: flex;
-  padding: 6px 4px; /* УМЕНЬШИЛИ */
+  padding: 6px 4px;
   z-index: 50;
   box-shadow: var(--nav-glow);
   backdrop-filter: blur(20px);
@@ -159,7 +155,7 @@ body {
 .nav-item { 
   flex: 1; 
   text-align: center; 
-  font-size: 10px; /* УМЕНЬШИЛИ */
+  font-size: 10px; 
   color: var(--text-muted); 
   cursor: pointer; 
   padding: 4px 0; 
@@ -171,14 +167,14 @@ body {
   justify-content: center; 
 }
 .nav-item .nav-icon { 
-  font-size: 18px; /* УМЕНЬШИЛИ */
+  font-size: 18px; 
   margin-bottom: 0px; 
   transition: transform 0.2s; 
 }
 .nav-item.active { color: var(--accent); font-weight: 600; }
 .nav-item.active .nav-icon { transform: scale(1.1) translateY(-2px); }
 
-/* Остальные стили без изменений */
+/* Остальное без изменений */
 .btn { display: block; width: 100%; padding: 16px; border: none; border-radius: 16px; background: var(--accent); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 12px; box-shadow: 0 4px 12px rgba(33,160,56,0.3); }
 .btn:active { transform: scale(0.98); background: var(--accent-dark); box-shadow: none; }
 .btn.secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); box-shadow: var(--shadow); }
