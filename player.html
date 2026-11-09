@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <link rel="manifest" href="manifest.json">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Монобанк — Игрок</title>
   
-  <!-- PWA теги -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Монобанк">
@@ -22,17 +20,14 @@
       <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
     </div>
 
-    <!-- Карточка баланса -->
     <div class="card" style="text-align:center; position:relative; margin-bottom:16px;">
       <div style="font-size:40px; margin-bottom:8px;" id="myAvatar">🐱</div>
       <div class="balance-label">Твой баланс</div>
       <div class="balance-amount"><span id="myBalance">0</span> <span class="cur">₽</span></div>
     </div>
 
-    <!-- Кнопка перевода наверху -->
     <button class="btn" onclick="openTransferModal()" style="margin-bottom:24px;">💸 Перевести деньги</button>
 
-    <!-- Вкладка 1: История -->
     <div id="tabHistoryContent">
       <div class="card">
         <h3 style="margin-bottom:12px; font-size:16px;">История операций</h3>
@@ -40,7 +35,6 @@
       </div>
     </div>
 
-    <!-- Вкладка 2: Игроки -->
     <div id="tabPlayersContent" style="display:none;">
       <div class="card">
         <h3 style="margin-bottom:12px; font-size:16px;">Игроки в комнате</h3>
@@ -48,7 +42,6 @@
       </div>
     </div>
 
-    <!-- Вкладка 3: Настройки -->
     <div id="tabSettingsContent" style="display:none;">
       <div class="card" style="text-align:center; padding:30px;">
         <div style="font-size:48px; margin-bottom:16px;">⚙️</div>
@@ -59,7 +52,6 @@
     </div>
   </div>
 
-  <!-- Нижняя навигация -->
   <div class="bottom-nav">
     <div class="nav-item active" id="navHistory" onclick="switchTab('history')">
       <span class="nav-icon">📋</span> Операции
@@ -72,7 +64,6 @@
     </div>
   </div>
 
-  <!-- Модалка перевода -->
   <div class="modal-overlay" id="transferModal" style="display:none;">
     <div class="modal">
       <h3 style="margin-bottom:16px;">Перевод</h3>
@@ -103,7 +94,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-client.js"></script>
   <script src="js/ui.js"></script>
-  <!-- Версия скрипта обновлена до v=8 -->
-  <script src="js/player.js?v=8"></script>
+  <script src="js/player.js?v=9"></script>
 </body>
 </html>
