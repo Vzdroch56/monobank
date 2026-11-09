@@ -1,7 +1,7 @@
 :root {
   --bg: #f2f5f2;
-  /* Плавный радиальный градиент сверху */
-  --bg-gradient: radial-gradient(ellipse at top, #e2e8e2 0%, #f2f5f2 60%, #f2f5f2 100%);
+  /* Плавный градиент сверху вниз */
+  --bg-gradient: linear-gradient(180deg, #dce4dc 0%, #f2f5f2 30%, #f2f5f2 100%);
   --card: rgba(255, 255, 255, 0.75);
   --text: #0f1410;
   --text-muted: #6b756b;
@@ -17,7 +17,7 @@
 
 [data-theme="dark"] {
   --bg: #0f1410;
-  --bg-gradient: radial-gradient(ellipse at top, #141c14 0%, #0f1410 60%, #0f1410 100%);
+  --bg-gradient: linear-gradient(180deg, #141c14 0%, #0f1410 30%, #0f1410 100%);
   --card: rgba(26, 33, 26, 0.75);
   --text: #e8ede8;
   --text-muted: #8a968a;
@@ -45,10 +45,12 @@ body {
 .app {
   width: 100%;
   max-width: 480px;
-  padding: 70px 10px 120px; 
+  /* Отступ сверху равен высоте шапки + высоте карточки */
+  padding: 60px 10px 120px; 
   position: relative;
 }
 
+/* --- ШАПКА (ПРОЗРАЧНАЯ) --- */
 .fixed-header {
   position: fixed;
   top: 0;
@@ -56,13 +58,12 @@ body {
   transform: translateX(-50%);
   width: 100%;
   max-width: 480px;
-  padding: 16px 20px 12px;
+  padding: 16px 20px;
   z-index: 100;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: transparent; /* Шапка прозрачная, чтобы градиент был виден */
-  transition: background 0.3s;
+  /* Убрали фон и тень, чтобы градиент плавно перетекал */
 }
 .fixed-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
 .theme-toggle {
@@ -77,29 +78,24 @@ body {
   backdrop-filter: blur(10px);
 }
 
-.card {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 20px;
-  box-shadow: var(--shadow);
-  margin-bottom: 12px;
-  border: 1px solid var(--border);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-/* --- КАРТОЧКА БАЛАНСА --- */
+/* --- КАРТОЧКА БАЛАНСА (FIXED) --- */
 .balance-card {
+  position: fixed;
+  top: 70px; /* Отступ от верха */
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 20px); /* Чуть уже экрана (по 10px с боков) */
+  max-width: 460px;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(200, 205, 200, 0.6) 100%);
   border: 1px solid rgba(255, 255, 255, 0.8);
-  position: sticky;
-  top: 76px; 
-  z-index: 10;
+  border-radius: var(--radius);
+  z-index: 90;
   overflow: hidden;
   box-shadow: var(--shadow-active);
-  will-change: transform;
-  /* Жестко фиксируем высоту, чтобы карточка не прыгала */
-  height: 170px; 
+  /* Сделали чуть выше (180px) */
+  height: 180px;
+  /* Плавный переход для смены высоты при скролле */
+  transition: height 0.2s ease, top 0.2s ease, padding 0.2s ease;
 }
 [data-theme="dark"] .balance-card {
   background: linear-gradient(135deg, rgba(26, 33, 26, 0.9) 0%, rgba(15, 20, 15, 0.7) 100%);
@@ -113,54 +109,74 @@ body {
   height: 100%;
 }
 
-/* Элементы позиционируются абсолютно, чтобы плавно двигаться */
+/* Элементы */
 .balance-avatar, .balance-label, .balance-amount, .balance-room-code {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  transition: all 0.1s linear;
+  transition: all 0.2s ease;
   text-align: center;
   white-space: nowrap;
 }
 
-/* Изначальное положение (центр) */
-.balance-avatar { top: 20px; font-size: 44px; line-height: 1; }
-.balance-label { top: 74px; font-size: 14px; color: var(--text-muted); }
-.balance-amount { top: 92px; font-size: 44px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); }
+/* Положение в обычном состоянии */
+.balance-avatar { top: 24px; font-size: 48px; line-height: 1; }
+.balance-label { top: 82px; font-size: 14px; color: var(--text-muted); }
+.balance-amount { top: 102px; font-size: 46px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); }
 .balance-amount .cur { font-size: 24px; font-weight: 600; opacity: 0.6; }
-.balance-room-code { top: 144px; font-size: 13px; color: var(--text-muted); }
+.balance-room-code { top: 156px; font-size: 13px; color: var(--text-muted); }
 
-/* Сжатое состояние (разъезжаются по сторонам) */
+/* Сжатое состояние (СРАБАТЫВАЕТ ПРИ СКРОЛЛЕ) */
 .balance-card.compact {
-  height: 60px; /* Уменьшаем высоту карточки */
-  top: 66px;
+  height: 64px;
+  top: 60px;
 }
 .balance-card.compact .balance-avatar {
   left: 20px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 26px;
+  font-size: 28px;
 }
 .balance-card.compact .balance-amount {
   left: auto;
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 22px;
+  font-size: 24px;
   letter-spacing: 0;
 }
 .balance-card.compact .balance-label,
 .balance-card.compact .balance-room-code {
   opacity: 0;
   pointer-events: none;
+  transform: translate(-50%, -50%); /* Чтобы они не мешали */
 }
 
-/* Остальные стили */
+/* --- ОСТАЛЬНЫЕ СТИЛИ --- */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Сдвигаем контент, чтобы он был под фиксированной карточкой */
+.main-content {
+  margin-top: 200px; 
+  transition: margin-top 0.2s ease;
+}
+.main-content.compact {
+  margin-top: 80px;
+}
+
 .btn { display: block; width: 100%; padding: 16px; border: none; border-radius: 16px; background: var(--accent); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 12px; box-shadow: 0 4px 12px rgba(33,160,56,0.3); }
 .btn:active { transform: scale(0.98); background: var(--accent-dark); box-shadow: none; }
 .btn.secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); box-shadow: var(--shadow); }
 .btn.secondary:active { background: var(--bg); }
-.btn.danger { background: var(--danger); box-shadow: 0 4px 12px rgba(211,47,47,0.3); }
 
 .field { margin-bottom: 14px; }
 .field label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
@@ -199,7 +215,6 @@ body {
 .modal { background: var(--bg); width: 100%; max-width: 480px; border-radius: 28px 28px 0 0; padding: 24px 20px 32px; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-/* --- НИЖНИЙ БАР --- */
 .bottom-nav {
   position: fixed;
   bottom: 20px;
