@@ -11,7 +11,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!session || session.is_banker) { window.location.href = 'index.html'; return; }
 
   document.getElementById('myAvatar').textContent = session.avatar;
-  document.getElementById('sessionPlayerId').textContent = session.player_id.slice(0, 8) + '...';
+  if(document.getElementById('sessionPlayerId')) {
+    document.getElementById('sessionPlayerId').textContent = session.player_id.slice(0, 8) + '...';
+  }
   
   await loadRoomState();
   subscribeRealtime();
@@ -43,17 +45,15 @@ function switchTab(tab) {
   document.getElementById('navSettings').classList.toggle('active', tab === 'settings');
 }
 
-// --- Рендер Игроков ---
 function renderPlayersList() {
   const list = document.getElementById('playersList');
   list.innerHTML = allPlayers.map(p => {
-    if (p.id === session.player_id) return ''; // Себя не показываем в списке игроков
+    if (p.id === session.player_id) return ''; // Себя не показываем
     return `
       <div class="player-row">
         <div class="player-avatar">${p.avatar}</div>
         <div class="player-info">
           <div class="player-name">${esc(p.name)}</div>
-          <!-- Строка с балансом удалена -->
         </div>
         <button class="btn secondary" style="width:auto; padding:8px 12px; margin:0; font-size:13px;" 
           onclick="quickTransfer('${p.id}')">💸</button>
@@ -67,24 +67,19 @@ function quickTransfer(targetId) {
   openTransferModal();
 }
 
-// --- Рендер Истории ---
-// --- Рендер Истории ---
 function renderHistory() {
   const list = document.getElementById('historyList');
   
   if (!allTxs || allTxs.length === 0) { list.innerHTML = '<div class="empty">Пока нет операций</div>'; return; }
 
-  // Фильтруем операции:
-  // 1. Показываем ВСЕ операции, где участвует Банк (зарплаты, штрафы, переводы в банк)
-  // 2. Показываем ЛИЧНЫЕ операции, где участвую Я (отправитель или получатель)
+  // Фильтр: показываем всё, что связано с банком, ИЛИ личные переводы
   const visibleTxs = allTxs.filter(tx => {
-    const isBankOperation = tx.from_player === null || tx.to_player === null || 
-                            (tx.from_player && allPlayers.find(p => p.id === tx.from_player)?.is_bank_account) ||
-                            (tx.to_player && allPlayers.find(p => p.id === tx.to_player)?.is_bank_account);
+    const isBankOp = tx.from_player === null || tx.to_player === null || 
+                     (tx.from_player && allPlayers.find(p => p.id === tx.from_player)?.is_bank_account) ||
+                     (tx.to_player && allPlayers.find(p => p.id === tx.to_player)?.is_bank_account);
     
-    const isMyOperation = tx.from_player === session.player_id || tx.to_player === session.player_id;
-    
-    return isBankOperation || isMyOperation;
+    const isMyOp = tx.from_player === session.player_id || tx.to_player === session.player_id;
+    return isBankOp || isMyOp;
   });
 
   list.innerHTML = visibleTxs.map(tx => {
@@ -105,14 +100,12 @@ function renderHistory() {
     } else if (isOutgoing) {
       title = toP ? `Для ${toP.name}` : 'Перевод'; icon = '↗️'; amountClass = 'out'; sign = '-';
     } else {
-      // Чужая операция с Банком
       if (!fromP && toP) { title = `Банк → ${toP.name}`; icon = '🏦'; amountClass = 'out'; }
       else if (fromP && !toP) { title = `${fromP.name} → Банк`; icon = '🏦'; amountClass = 'in'; }
       sign = ''; 
     }
 
     const commentHtml = tx.comment ? `<div class="tx-comment">${esc(tx.comment)}</div>` : '';
-    // Для чужих операций с банком делаем текст серым, чтобы не путать с личными
     const isForeign = !isIncoming && !isOutgoing;
     const colorStyle = isForeign ? 'color: var(--text-muted);' : '';
 
@@ -124,23 +117,6 @@ function renderHistory() {
           ${commentHtml}
         </div>
         <div class="tx-amount ${amountClass}" style="${colorStyle}">
-          ${sign}${fmtMoney(tx.amount)} ₽
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-    const commentHtml = tx.comment ? `<div class="tx-comment">${esc(tx.comment)}</div>` : '';
-
-    return `
-      <div class="tx-row">
-        <div class="tx-icon ${amountClass}">${icon}</div>
-        <div class="tx-info">
-          <div class="tx-title">${esc(title)}</div>
-          ${commentHtml}
-        </div>
-        <div class="tx-amount ${amountClass}" style="color: ${isIncoming || isOutgoing ? '' : 'var(--text-muted)'}">
           ${sign}${fmtMoney(tx.amount)} ₽
         </div>
       </div>
