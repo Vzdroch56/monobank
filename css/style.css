@@ -1,7 +1,8 @@
 :root {
   --bg: #f2f5f2;
-  --bg-gradient: linear-gradient(180deg, #f2f5f2 0%, #e0e8e0 100%);
-  --card: rgba(255, 255, 255, 0.85);
+  /* Сделали градиент длиннее и плавнее */
+  --bg-gradient: linear-gradient(180deg, #e2e8e2 0%, #f2f5f2 40%, #f2f5f2 100%);
+  --card: rgba(255, 255, 255, 0.75);
   --text: #0f1410;
   --text-muted: #6b756b;
   --accent: #21a038;
@@ -16,8 +17,8 @@
 
 [data-theme="dark"] {
   --bg: #0f1410;
-  --bg-gradient: linear-gradient(180deg, #0f1410 0%, #1a241a 100%);
-  --card: rgba(26, 33, 26, 0.85);
+  --bg-gradient: linear-gradient(180deg, #141c14 0%, #0f1410 40%, #0f1410 100%);
+  --card: rgba(26, 33, 26, 0.75);
   --text: #e8ede8;
   --text-muted: #8a968a;
   --accent: #2ecc47;
@@ -41,15 +42,14 @@ body {
   transition: background 0.3s, color 0.3s;
 }
 
-/* Уменьшили боковые отступы с 16px до 8px, чтобы карточки были шире */
+/* Сделали карточки шире (боковые отступы 10px) */
 .app {
   width: 100%;
   max-width: 480px;
-  padding: 70px 12px 120px; 
+  padding: 70px 10px 120px; 
   position: relative;
 }
 
-/* --- ФИКСИРОВАННАЯ ШАПКА (без градиента) --- */
 .fixed-header {
   position: fixed;
   top: 0;
@@ -62,9 +62,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--bg); /* Твердый цвет вместо градиента */
+  background: var(--bg);
   transition: background 0.3s;
-  /* Мягкая тень вместо резкого градиента */
   box-shadow: 0 4px 20px -10px rgba(0,0,0,0.1);
 }
 [data-theme="dark"] .fixed-header {
@@ -80,9 +79,9 @@ body {
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
 }
 
-/* --- КАРТОЧКИ --- */
 .card {
   background: var(--card);
   border-radius: var(--radius);
@@ -94,18 +93,18 @@ body {
   -webkit-backdrop-filter: blur(16px);
 }
 
-/* --- КАРТОЧКА БАЛАНСА (АНТИ-МОРГАНИЕ) --- */
+/* --- КАРТОЧКА БАЛАНСА --- */
 .balance-card {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(200, 205, 200, 0.6) 100%);
   border: 1px solid rgba(255, 255, 255, 0.8);
   text-align: center;
   position: sticky;
-  top: 70px;
+  /* Отступ сверху равен отступу до кнопки снизу (margin-bottom 12px + запас) */
+  top: 76px; 
   z-index: 10;
   overflow: hidden;
   box-shadow: var(--shadow-active);
-  /* Жестко фиксируем переход, чтобы убрать скачки */
-  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+  /* Убрали transition, так как теперь управляем через JS */
   will-change: transform, padding, height;
 }
 [data-theme="dark"] .balance-card {
@@ -113,32 +112,30 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Обертка, которая меняет flex-направление */
+/* Сделали карточку чуть выше (130px) */
 .balance-inner {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* Фиксированная высота не дает карточке "прыгать" */
-  height: 110px; 
-  transition: all 0.2s ease;
+  height: 130px; 
+  transition: all 0.1s linear;
 }
 
-.balance-avatar { font-size: 40px; line-height: 1; margin-bottom: 8px; transition: all 0.2s; }
-.balance-label { font-size: 14px; color: var(--text-muted); margin-bottom: 4px; transition: all 0.2s; }
-.balance-amount { font-size: 42px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); transition: all 0.2s; }
+.balance-avatar { font-size: 44px; line-height: 1; margin-bottom: 10px; transition: all 0.1s linear; }
+.balance-label { font-size: 14px; color: var(--text-muted); margin-bottom: 4px; transition: all 0.1s linear; }
+.balance-amount { font-size: 44px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); transition: all 0.1s linear; }
 .balance-amount .cur { font-size: 24px; font-weight: 600; opacity: 0.6; }
-.balance-room-code { font-size: 13px; color: var(--text-muted); margin-top: 4px; transition: all 0.2s; }
+.balance-room-code { font-size: 13px; color: var(--text-muted); margin-top: 6px; transition: all 0.1s linear; }
 
-/* Сжатое состояние */
+/* Класс, который будет вешать JS при скролле */
 .balance-card.compact {
-  top: 66px; /* Чуть выше при сжатии */
-  padding: 12px 20px;
+  padding: 10px 16px;
 }
 .balance-card.compact .balance-inner {
   flex-direction: row;
   justify-content: space-between;
-  height: 44px; /* Высота строки */
+  height: 44px;
 }
 .balance-card.compact .balance-avatar { font-size: 24px; margin: 0; }
 .balance-card.compact .balance-label, 
@@ -189,6 +186,7 @@ body {
 .modal { background: var(--bg); width: 100%; max-width: 480px; border-radius: 28px 28px 0 0; padding: 24px 20px 32px; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
+/* --- НИЖНИЙ БАР (ЭФФЕКТ СТЕКЛА) --- */
 .bottom-nav {
   position: fixed;
   bottom: 20px;
@@ -196,8 +194,9 @@ body {
   transform: translateX(-50%);
   width: calc(100% - 24px);
   max-width: 400px;
-  background: var(--card);
-  border: 1px solid var(--border);
+  /* Применили полупрозрачный градиент как на карточке */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(200, 205, 200, 0.5) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 24px;
   display: flex;
   padding: 8px;
@@ -206,6 +205,11 @@ body {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
+[data-theme="dark"] .bottom-nav {
+  background: linear-gradient(135deg, rgba(26, 33, 26, 0.8) 0%, rgba(15, 20, 15, 0.6) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 .nav-item { flex: 1; text-align: center; font-size: 11px; color: var(--text-muted); cursor: pointer; padding: 8px 0; border-radius: 16px; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .nav-item .nav-icon { font-size: 22px; margin-bottom: 2px; transition: transform 0.2s; }
 .nav-item.active { color: var(--accent); font-weight: 600; }
