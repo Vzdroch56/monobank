@@ -41,10 +41,11 @@ body {
   transition: background 0.3s, color 0.3s;
 }
 
+/* Уменьшили отступ сверху, чтобы карточка была ближе к шапке */
 .app {
   width: 100%;
   max-width: 480px;
-  padding: 70px 10px 120px; 
+  padding: 60px 10px 120px; 
   position: relative;
 }
 
@@ -86,22 +87,21 @@ body {
   -webkit-backdrop-filter: blur(16px);
 }
 
-/* --- КАРТОЧКА БАЛАНСА (STICKY - ОНА В ПОТОКЕ) --- */
+/* --- КАРТОЧКА БАЛАНСА (STICKY БЕЗ TRANSITION) --- */
 .balance-card {
-  position: sticky; /* Вернули в поток */
-  top: 65px; /* Прилипает под шапкой */
+  position: sticky;
+  top: 55px; /* Ближе к шапке */
   z-index: 10;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(200, 205, 200, 0.6) 100%);
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow-active);
+  /* Высота по умолчанию */
   height: 170px;
-  /* Анимация сжатия */
-  transition: height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), 
-              margin-bottom 0.3s ease, 
-              top 0.3s ease;
+  /* Убрали transition для height и top, теперь JS будет двигать их напрямую */
   margin-bottom: 16px;
+  will-change: height, top;
 }
 [data-theme="dark"] .balance-card {
   background: linear-gradient(135deg, rgba(26, 33, 26, 0.9) 0%, rgba(15, 20, 15, 0.7) 100%);
@@ -114,28 +114,27 @@ body {
   height: 100%;
 }
 
-/* Элементы */
+/* Элементы (подняли чуть выше для центровки) */
 .balance-avatar, .balance-label, .balance-amount, .balance-room-code {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: all 0.2s ease; /* Плавность для цвета/размера */
   text-align: center;
   white-space: nowrap;
 }
 
-/* В раскрытом состоянии */
 .balance-avatar { top: 20px; font-size: 48px; line-height: 1; }
 .balance-label { top: 76px; font-size: 14px; color: var(--text-muted); }
 .balance-amount { top: 94px; font-size: 46px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); }
 .balance-amount .cur { font-size: 24px; font-weight: 600; opacity: 0.6; }
 .balance-room-code { top: 146px; font-size: 13px; color: var(--text-muted); }
 
-/* В сжатом состоянии */
+/* Сжатое состояние (вызывается JS) */
 .balance-card.compact {
-  height: 64px;
-  top: 60px;
-  margin-bottom: 12px; /* Чуть уменьшаем отступ снизу */
+  /* height: 64px; - задается через JS */
+  /* top: 50px; - задается через JS */
+  margin-bottom: 12px;
 }
 .balance-card.compact .balance-avatar {
   left: 20px;
@@ -157,7 +156,7 @@ body {
   pointer-events: none;
 }
 
-/* Остальные стили без изменений */
+/* Остальные стили без изменений... */
 .btn { display: block; width: 100%; padding: 16px; border: none; border-radius: 16px; background: var(--accent); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 12px; box-shadow: 0 4px 12px rgba(33,160,56,0.3); }
 .btn:active { transform: scale(0.98); background: var(--accent-dark); box-shadow: none; }
 .btn.secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); box-shadow: var(--shadow); }
