@@ -72,7 +72,6 @@ function renderHistory() {
   
   if (!allTxs || allTxs.length === 0) { list.innerHTML = '<div class="empty">Пока нет операций</div>'; return; }
 
-  // Фильтр: показываем всё, что связано с банком, ИЛИ личные переводы
   const visibleTxs = allTxs.filter(tx => {
     const isBankOp = tx.from_player === null || tx.to_player === null || 
                      (tx.from_player && allPlayers.find(p => p.id === tx.from_player)?.is_bank_account) ||
@@ -90,19 +89,26 @@ function renderHistory() {
     const fromP = tx.from_player ? allPlayers.find(p => p.id === tx.from_player) : null;
     const toP = tx.to_player ? allPlayers.find(p => p.id === tx.to_player) : null;
 
-    if (isIncoming && (!fromP || fromP.is_bank_account)) {
-      title = 'Пополнение от Банка'; icon = '🏦'; amountClass = 'in'; sign = '+';
-    } else if (isOutgoing && (!toP || toP.is_bank_account)) {
-      title = 'Перевод в Банк'; icon = '🏦'; amountClass = 'out'; sign = '-';
-    } else if (isIncoming) {
-      title = fromP ? `От ${fromP.name}` : 'Перевод';
+    if (isIncoming) {
+      if (!fromP || fromP.is_bank_account) title = 'Пополнение от Банка';
+      else title = `От ${fromP.name}`;
       icon = '↙️'; amountClass = 'in'; sign = '+';
     } else if (isOutgoing) {
-      title = toP ? `Для ${toP.name}` : 'Перевод'; icon = '↗️'; amountClass = 'out'; sign = '-';
+      if (!toP || toP.is_bank_account) title = 'Перевод в Банк';
+      else title = `Для ${toP.name}`;
+      icon = '↗️'; amountClass = 'out'; sign = '-';
     } else {
-      if (!fromP && toP) { title = `Банк → ${toP.name}`; icon = '🏦'; amountClass = 'out'; }
-      else if (fromP && !toP) { title = `${fromP.name} → Банк`; icon = '🏦'; amountClass = 'in'; }
-      sign = ''; 
+      // Чужие операции
+      if (!fromP && toP) { 
+        title = `Банк → ${toP.name}`; 
+        icon = '🏦'; amountClass = 'out'; sign = '-'; // Банк отправил (минус банку)
+      } else if (fromP && !toP) { 
+        title = `${fromP.name} → Банк`; 
+        icon = '🏦'; amountClass = 'in'; sign = '+'; // Банк получил (плюс банку)
+      } else if (fromP && toP) { 
+        title = `${fromP.name} → ${toP.name}`; 
+        icon = '💸'; amountClass = 'out'; sign = '-'; 
+      }
     }
 
     const commentHtml = tx.comment ? `<div class="tx-comment">${esc(tx.comment)}</div>` : '';
