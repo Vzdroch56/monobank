@@ -101,25 +101,5 @@
   <script src="js/supabase-client.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/player.js?v=9"></script>
-<script>
-  let ticking = false;
-  const card = document.getElementById('mainBalanceCard');
-  
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      window.requestAnimationFrame(() => {
-        if (card) {
-          if (window.scrollY > 30) {
-            card.classList.add('compact');
-          } else {
-            card.classList.remove('compact');
-          }
-        }
-        ticking = false;
-      });
-      ticking = true;
-    }
-  });
-</script>
 </body>
 </html>
