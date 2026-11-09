@@ -143,21 +143,20 @@
   let lastScrollY = window.scrollY;
   let ticking = false;
   const card = document.getElementById('mainBalanceCard');
+  const content = document.getElementById('mainContent');
 
   window.addEventListener('scroll', () => {
     lastScrollY = window.scrollY;
     if (!ticking) {
       window.requestAnimationFrame(() => {
         if (card) {
-          if (lastScrollY > 20) {
+          // Если прокрутили больше 30px
+          if (lastScrollY > 30) {
             card.classList.add('compact');
-            // Плавно уменьшаем отступ (с 76px до 66px)
-            const scrollProgress = Math.min(lastScrollY - 20, 50); 
-            const topOffset = 76 - (scrollProgress * 0.2); 
-            card.style.top = `${topOffset}px`;
+            if (content) content.classList.add('compact');
           } else {
             card.classList.remove('compact');
-            card.style.top = '76px';
+            if (content) content.classList.remove('compact');
           }
         }
         ticking = false;
