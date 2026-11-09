@@ -48,7 +48,7 @@ function switchTab(tab) {
 function renderPlayersList() {
   const list = document.getElementById('playersList');
   list.innerHTML = allPlayers.map(p => {
-    if (p.id === session.player_id) return ''; // Себя не показываем
+    if (p.id === session.player_id) return '';
     return `
       <div class="player-row">
         <div class="player-avatar">${p.avatar}</div>
@@ -98,13 +98,12 @@ function renderHistory() {
       else title = `Для ${toP.name}`;
       icon = '↗️'; amountClass = 'out'; sign = '-';
     } else {
-      // Чужие операции
       if (!fromP && toP) { 
         title = `Банк → ${toP.name}`; 
-        icon = '🏦'; amountClass = 'out'; sign = '-'; // Банк отправил (минус банку)
+        icon = '🏦'; amountClass = 'out'; sign = '-';
       } else if (fromP && !toP) { 
         title = `${fromP.name} → Банк`; 
-        icon = '🏦'; amountClass = 'in'; sign = '+'; // Банк получил (плюс банку)
+        icon = '🏦'; amountClass = 'in'; sign = '+';
       } else if (fromP && toP) { 
         title = `${fromP.name} → ${toP.name}`; 
         icon = '💸'; amountClass = 'out'; sign = '-'; 
