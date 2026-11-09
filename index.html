@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Монобанк — Вход</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <h1>Монобанк 🏦</h1>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
+    </div>
+
+    <!-- Экран 1: Старт -->
+    <div id="screenStart">
+      <div class="card" style="text-align:center;">
+        <div style="font-size:48px; margin-bottom:8px;">💸</div>
+        <h2 style="font-size:18px; margin-bottom:8px;">Игра в Монополию</h2>
+        <p style="color:var(--text-muted); font-size:14px;">Банк для твоей настольной игры</p>
+      </div>
+      <button class="btn" onclick="showScreen('create')">Создать комнату (Банкир)</button>
+      <button class="btn secondary" onclick="showScreen('join')">Войти по коду</button>
+    </div>
+
+    <!-- Экран 2: Создание комнаты -->
+    <div id="screenCreate" style="display:none;">
+      <button class="btn secondary" style="margin-bottom:12px;" onclick="showScreen('start')">← Назад</button>
+      <div class="card">
+        <h3 style="margin-bottom:16px;">Создание комнаты</h3>
+        
+        <div class="field">
+          <label>Твоё имя (Банкир)</label>
+          <input type="text" id="bankerName" placeholder="Например: Иван" maxlength="20">
+        </div>
+        
+        <div class="field">
+          <label>Выбери аватарку</label>
+          <div class="avatars" id="bankerAvatars"></div>
+        </div>
+
+        <div class="field">
+          <label>PIN-код для входа (4 цифры)</label>
+          <input type="text" id="roomPin" placeholder="1234" maxlength="4" inputmode="numeric" pattern="\d*">
+        </div>
+
+        <button class="btn" onclick="createRoom()">Создать</button>
+      </div>
+    </div>
+
+    <!-- Экран 3: Вход по коду -->
+    <div id="screenJoin" style="display:none;">
+      <button class="btn secondary" style="margin-bottom:12px;" onclick="showScreen('start')">← Назад</button>
+      <div class="card">
+        <h3 style="margin-bottom:16px;">Вход в комнату</h3>
+        
+        <div class="field">
+          <label>Код комнаты (6 цифр)</label>
+          <input type="text" id="joinCode" placeholder="000000" maxlength="6" inputmode="numeric" pattern="\d*">
+        </div>
+
+        <div class="field">
+          <label>PIN-код</label>
+          <input type="text" id="joinPin" placeholder="1234" maxlength="4" inputmode="numeric" pattern="\d*">
+        </div>
+
+        <div class="field">
+          <label>Твоё имя</label>
+          <input type="text" id="playerName" placeholder="Твоё имя" maxlength="20">
+        </div>
+        
+        <div class="field">
+          <label>Выбери аватарку</label>
+          <div class="avatars" id="playerAvatars"></div>
+        </div>
+
+        <button class="btn" onclick="joinRoom()">Войти</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SDK Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Наши скрипты -->
+  <script src="js/supabase-client.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>
