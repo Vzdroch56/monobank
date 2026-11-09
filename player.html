@@ -102,21 +102,36 @@
   <script src="js/ui.js"></script>
   <script src="js/player.js?v=9"></script>
 <script>
-  let scrollTimeout;
+  let lastScrollY = window.scrollY;
+  let ticking = false;
+  const card = document.getElementById('mainBalanceCard');
+
   window.addEventListener('scroll', () => {
-    // Дебаунс: ждем окончания скролла, чтобы избежать моргания
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-      const card = document.getElementById('mainBalanceCard');
-      if (!card) return;
-      
-      // Если прокрутили больше 50 пикселей, сжимаем карточку
-      if (window.scrollY > 50) {
-        card.classList.add('compact');
-      } else {
-        card.classList.remove('compact');
-      }
-    }, 50); // Задержка 50 мс
+    lastScrollY = window.scrollY;
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        if (card) {
+          // Если прокрутили больше 20px, начинаем сжимать
+          if (lastScrollY > 20) {
+            card.classList.add('compact');
+            
+            // Плавно уменьшаем отступ сверху карточки в зависимости от скролла
+            const scrollProgress = Math.min(lastScrollY - 20, 50); // максимум 50px сдвига
+            const topOffset = 76 - (scrollProgress * 0.5); 
+            card.style.top = `${topOffset}px`;
+            
+            // Уменьшаем прозрачность тени
+            card.style.boxShadow = `0 ${8 - (scrollProgress * 0.1)}px 32px rgba(33,160,56,${0.25 - (scrollProgress * 0.004)})`;
+          } else {
+            card.classList.remove('compact');
+            card.style.top = '76px';
+            card.style.boxShadow = 'var(--shadow-active)';
+          }
+        }
+        ticking = false;
+      });
+      ticking = true;
+    }
   });
 </script>
 </body>
