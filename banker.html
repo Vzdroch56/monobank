@@ -145,7 +145,7 @@
   const avatar = card.querySelector('.balance-avatar');
   const amount = card.querySelector('.balance-amount');
   
-  const maxScroll = 150; 
+  const maxScroll = 120; // Скорость сжатия
   const startTop = 85;
   const endTop = 75;
 
@@ -157,41 +157,37 @@
           
           if (scrollY <= 0) {
             card.classList.remove('compact');
-            card.style.height = '210px'; // Высота
+            card.style.height = '185px';
             card.style.top = `${startTop}px`;
             
-            avatar.style.fontSize = '50px';
+            avatar.style.fontSize = '48px';
             avatar.style.transform = 'translate(-50%, -50%)';
-            avatar.style.marginTop = '-30px';
+            avatar.style.marginTop = '-20px';
             
-            amount.style.fontSize = '44px';
+            amount.style.fontSize = '42px';
             amount.style.transform = 'translate(-50%, -50%)';
-            amount.style.marginTop = '40px';
-            
+            amount.style.marginTop = '30px';
           } 
           else if (scrollY < maxScroll) {
             const progress = scrollY / maxScroll; 
             
-            card.style.height = `${210 - (140 * progress)}px`; // Плавно уменьшается
+            card.style.height = `${185 - (105 * progress)}px`; 
             card.style.top = `${startTop - (10 * progress)}px`;
             
-            avatar.style.fontSize = `${50 - (24 * progress)}px`;
-            amount.style.fontSize = `${44 - (20 * progress)}px`;
+            avatar.style.fontSize = `${48 - (22 * progress)}px`;
+            amount.style.fontSize = `${42 - (18 * progress)}px`;
             
-            // Сдвиг от центра
             const shift = progress * 110; 
             
-            // Убираем отступы по вертикали для плавности
-            avatar.style.marginTop = `${-30 + (30 * progress)}px`;
-            amount.style.marginTop = `${40 - (40 * progress)}px`;
+            avatar.style.marginTop = `${-20 + (20 * progress)}px`;
+            amount.style.marginTop = `${30 - (30 * progress)}px`;
             
-            // Двигаем в стороны
             avatar.style.transform = `translate(calc(-50% - ${shift}px), -50%)`;
             amount.style.transform = `translate(calc(-50% + ${shift}px), -50%)`;
             
           } else {
             card.classList.add('compact');
-            card.style.height = '70px'; // Итоговая высота
+            card.style.height = '80px'; // Комфортная финальная высота
             card.style.top = `${endTop}px`;
             
             avatar.style.fontSize = '26px';
