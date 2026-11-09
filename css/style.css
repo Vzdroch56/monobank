@@ -75,7 +75,6 @@ body {
   backdrop-filter: blur(10px);
 }
 
-/* Общие карточки */
 .card {
   background: var(--card);
   border-radius: var(--radius);
@@ -87,24 +86,22 @@ body {
   -webkit-backdrop-filter: blur(16px);
 }
 
-/* --- КАРТОЧКА БАЛАНСА (FIXED + АНИМАЦИЯ) --- */
+/* --- КАРТОЧКА БАЛАНСА (STICKY - ОНА В ПОТОКЕ) --- */
 .balance-card {
-  position: fixed;
-  top: 55px; /* Расстояние от шапки */
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 20px);
-  max-width: 460px;
+  position: sticky; /* Вернули в поток */
+  top: 65px; /* Прилипает под шапкой */
+  z-index: 10;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(200, 205, 200, 0.6) 100%);
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: var(--radius);
-  z-index: 90;
   overflow: hidden;
   box-shadow: var(--shadow-active);
-  height: 180px;
+  height: 170px;
+  /* Анимация сжатия */
   transition: height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), 
-              top 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), 
-              box-shadow 0.3s ease;
+              margin-bottom 0.3s ease, 
+              top 0.3s ease;
+  margin-bottom: 16px;
 }
 [data-theme="dark"] .balance-card {
   background: linear-gradient(135deg, rgba(26, 33, 26, 0.9) 0%, rgba(15, 20, 15, 0.7) 100%);
@@ -127,30 +124,31 @@ body {
   white-space: nowrap;
 }
 
-/* В обычном состоянии */
-.balance-avatar { top: 24px; font-size: 48px; line-height: 1; }
-.balance-label { top: 82px; font-size: 14px; color: var(--text-muted); }
-.balance-amount { top: 102px; font-size: 46px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); }
+/* В раскрытом состоянии */
+.balance-avatar { top: 20px; font-size: 48px; line-height: 1; }
+.balance-label { top: 76px; font-size: 14px; color: var(--text-muted); }
+.balance-amount { top: 94px; font-size: 46px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); }
 .balance-amount .cur { font-size: 24px; font-weight: 600; opacity: 0.6; }
-.balance-room-code { top: 156px; font-size: 13px; color: var(--text-muted); }
+.balance-room-code { top: 146px; font-size: 13px; color: var(--text-muted); }
 
-/* Сжатое состояние */
+/* В сжатом состоянии */
 .balance-card.compact {
   height: 64px;
-  top: 70px; /* Чуть опускается при скролле, чтобы компенсировать сжатие */
+  top: 60px;
+  margin-bottom: 12px; /* Чуть уменьшаем отступ снизу */
 }
 .balance-card.compact .balance-avatar {
   left: 20px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 28px;
+  font-size: 26px;
 }
 .balance-card.compact .balance-amount {
   left: auto;
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 24px;
+  font-size: 22px;
   letter-spacing: 0;
 }
 .balance-card.compact .balance-label,
@@ -159,17 +157,7 @@ body {
   pointer-events: none;
 }
 
-/* --- ОБЕРТКА КОНТЕНТА --- */
-/* Эта штука сдвигает кнопки и списки вниз, чтобы они не прятались за карточкой */
-.main-content {
-  margin-top: 195px; /* 180px высота карточки + 15px отступ */
-  transition: margin-top 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.main-content.compact {
-  margin-top: 80px; /* Сдвигается наверх, когда карточка сжалась */
-}
-
-/* Остальные стили (без изменений) */
+/* Остальные стили без изменений */
 .btn { display: block; width: 100%; padding: 16px; border: none; border-radius: 16px; background: var(--accent); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 12px; box-shadow: 0 4px 12px rgba(33,160,56,0.3); }
 .btn:active { transform: scale(0.98); background: var(--accent-dark); box-shadow: none; }
 .btn.secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); box-shadow: var(--shadow); }
