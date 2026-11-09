@@ -1,29 +1,29 @@
 :root {
   --bg: #f2f5f2;
-  --bg-gradient: linear-gradient(180deg, #e0e8e0 0%, #f2f5f2 100%);
-  --card: rgba(255, 255, 255, 0.75);
+  --bg-gradient: linear-gradient(180deg, #f2f5f2 0%, #e0e8e0 100%);
+  --card: rgba(255, 255, 255, 0.85);
   --text: #0f1410;
   --text-muted: #6b756b;
   --accent: #21a038;
   --accent-dark: #178a2c;
-  --border: rgba(0, 0, 0, 0.08); /* Сделали темнее для светлой темы */
+  --border: rgba(0, 0, 0, 0.06); 
   --danger: #d32f2f;
   --radius: 20px;
-  --shadow: 0 8px 32px rgba(0,0,0,0.06);
-  --shadow-active: 0 8px 32px rgba(33,160,56,0.25); /* Усилили свечение */
-  --nav-glow: 0 10px 40px rgba(33, 160, 56, 0.3); /* Свечение для бара */
+  --shadow: 0 4px 16px rgba(0,0,0,0.05);
+  --shadow-active: 0 8px 32px rgba(33,160,56,0.25);
+  --nav-glow: 0 10px 40px rgba(33, 160, 56, 0.3);
 }
 
 [data-theme="dark"] {
   --bg: #0f1410;
-  --bg-gradient: linear-gradient(180deg, #1a241a 0%, #0f1410 100%);
-  --card: rgba(26, 33, 26, 0.75);
+  --bg-gradient: linear-gradient(180deg, #0f1410 0%, #1a241a 100%);
+  --card: rgba(26, 33, 26, 0.85);
   --text: #e8ede8;
   --text-muted: #8a968a;
   --accent: #2ecc47;
   --accent-dark: #25a83a;
-  --border: rgba(255, 255, 255, 0.1);
-  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --border: rgba(255, 255, 255, 0.08);
+  --shadow: 0 4px 16px rgba(0,0,0,0.3);
   --shadow-active: 0 8px 32px rgba(46,204,71,0.2);
   --nav-glow: 0 10px 40px rgba(46, 204, 71, 0.15);
 }
@@ -41,14 +41,15 @@ body {
   transition: background 0.3s, color 0.3s;
 }
 
+/* Уменьшили боковые отступы с 16px до 8px, чтобы карточки были шире */
 .app {
   width: 100%;
   max-width: 480px;
-  padding: 70px 16px 120px; /* Отступ сверху для фиксированной шапки */
+  padding: 70px 12px 120px; 
   position: relative;
 }
 
-/* --- ФИКСИРОВАННАЯ ШАПКА --- */
+/* --- ФИКСИРОВАННАЯ ШАПКА (без градиента) --- */
 .fixed-header {
   position: fixed;
   top: 0;
@@ -56,16 +57,18 @@ body {
   transform: translateX(-50%);
   width: 100%;
   max-width: 480px;
-  padding: 16px 16px 12px;
+  padding: 16px 20px 12px;
   z-index: 100;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--bg-gradient);
+  background: var(--bg); /* Твердый цвет вместо градиента */
   transition: background 0.3s;
-  /* Маска для плавного исчезновения фона снизу */
-  mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+  /* Мягкая тень вместо резкого градиента */
+  box-shadow: 0 4px 20px -10px rgba(0,0,0,0.1);
+}
+[data-theme="dark"] .fixed-header {
+  box-shadow: 0 4px 20px -10px rgba(0,0,0,0.5);
 }
 .fixed-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
 .theme-toggle {
@@ -76,73 +79,73 @@ body {
   font-size: 18px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  transition: transform 0.2s;
   box-shadow: var(--shadow);
-  backdrop-filter: blur(10px);
 }
 
-/* --- КАРТОЧКА БАЛАНСА (АНИМИРОВАННАЯ) --- */
+/* --- КАРТОЧКИ --- */
 .card {
   background: var(--card);
   border-radius: var(--radius);
   padding: 20px;
   box-shadow: var(--shadow);
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   border: 1px solid var(--border);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 }
 
+/* --- КАРТОЧКА БАЛАНСА (АНТИ-МОРГАНИЕ) --- */
 .balance-card {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(200, 205, 200, 0.4) 100%);
-  color: var(--text);
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(200, 205, 200, 0.6) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.8);
   text-align: center;
-  position: sticky; /* Делаем липкой */
-  top: 70px; /* Отступ от фиксированной шапки */
+  position: sticky;
+  top: 70px;
   z-index: 10;
-  transition: all 0.3s ease;
   overflow: hidden;
   box-shadow: var(--shadow-active);
+  /* Жестко фиксируем переход, чтобы убрать скачки */
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+  will-change: transform, padding, height;
 }
 [data-theme="dark"] .balance-card {
-  background: linear-gradient(135deg, rgba(26, 33, 26, 0.8) 0%, rgba(15, 20, 15, 0.6) 100%);
+  background: linear-gradient(135deg, rgba(26, 33, 26, 0.9) 0%, rgba(15, 20, 15, 0.7) 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Внутренняя обертка для управления раскладкой при скролле */
+/* Обертка, которая меняет flex-направление */
 .balance-inner {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  height: 100px; /* Фиксируем высоту, чтобы избежать скачков */
+  /* Фиксированная высота не дает карточке "прыгать" */
+  height: 110px; 
+  transition: all 0.2s ease;
 }
 
-.balance-avatar { font-size: 40px; transition: all 0.3s ease; }
-.balance-label { font-size: 14px; color: var(--text-muted); margin-bottom: 4px; transition: all 0.3s ease; }
-.balance-amount { font-size: 42px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); transition: all 0.3s ease; }
+.balance-avatar { font-size: 40px; line-height: 1; margin-bottom: 8px; transition: all 0.2s; }
+.balance-label { font-size: 14px; color: var(--text-muted); margin-bottom: 4px; transition: all 0.2s; }
+.balance-amount { font-size: 42px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); transition: all 0.2s; }
 .balance-amount .cur { font-size: 24px; font-weight: 600; opacity: 0.6; }
-.balance-room-code { font-size: 13px; color: var(--text-muted); margin-top: 8px; transition: all 0.3s ease; }
+.balance-room-code { font-size: 13px; color: var(--text-muted); margin-top: 4px; transition: all 0.2s; }
 
-/* Состояние при скролле (сжимается) */
+/* Сжатое состояние */
 .balance-card.compact {
-  top: 60px;
-  padding: 10px 16px;
-  border-radius: 16px;
+  top: 66px; /* Чуть выше при сжатии */
+  padding: 12px 20px;
 }
 .balance-card.compact .balance-inner {
-  flex-direction: row; /* Выстраиваем в строку */
+  flex-direction: row;
   justify-content: space-between;
-  height: 40px;
+  height: 44px; /* Высота строки */
 }
 .balance-card.compact .balance-avatar { font-size: 24px; margin: 0; }
 .balance-card.compact .balance-label, 
-.balance-card.compact .balance-room-code { display: none; } /* Скрываем лишнее */
-.balance-card.compact .balance-amount { font-size: 20px; margin: 0; letter-spacing: 0; }
+.balance-card.compact .balance-room-code { display: none; }
+.balance-card.compact .balance-amount { font-size: 22px; margin: 0; letter-spacing: 0; }
 
-/* --- ОСТАЛЬНЫЕ СТИЛИ --- */
+/* Остальные стили */
 .btn { display: block; width: 100%; padding: 16px; border: none; border-radius: 16px; background: var(--accent); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 12px; box-shadow: 0 4px 12px rgba(33,160,56,0.3); }
 .btn:active { transform: scale(0.98); background: var(--accent-dark); box-shadow: none; }
 .btn.secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); box-shadow: var(--shadow); }
@@ -154,17 +157,14 @@ body {
 .field input, .field select { width: 100%; padding: 14px 16px; border: 1px solid var(--border); border-radius: 14px; background: rgba(255, 255, 255, 0.4); color: var(--text); font-size: 16px; outline: none; transition: all 0.2s; }
 [data-theme="dark"] .field input, [data-theme="dark"] .field select { background: rgba(0, 0, 0, 0.2); }
 .field input:focus, .field select:focus { border-color: var(--accent); background: rgba(255, 255, 255, 0.8); }
-[data-theme="dark"] .field input:focus, [data-theme="dark"] .field select:focus { background: rgba(0, 0, 0, 0.4); }
 
 .avatars { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; justify-content: center; }
 .avatar-option { width: 52px; height: 52px; border-radius: 50%; background: rgba(255, 255, 255, 0.4); border: 2px solid transparent; font-size: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
-[data-theme="dark"] .avatar-option { background: rgba(0, 0, 0, 0.2); }
 .avatar-option.selected { border-color: var(--accent); transform: scale(1.1); background: var(--card); box-shadow: var(--shadow); }
 
 .player-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
 .player-row:last-child { border-bottom: none; }
 .player-avatar { width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.4); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
-[data-theme="dark"] .player-avatar { background: rgba(0, 0, 0, 0.2); }
 .player-info { flex: 1; }
 .player-name { font-weight: 600; font-size: 15px; }
 .player-balance { font-size: 14px; color: var(--text-muted); }
@@ -172,7 +172,6 @@ body {
 .tx-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
 .tx-row:last-child { border-bottom: none; }
 .tx-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; background: rgba(255, 255, 255, 0.4); flex-shrink: 0; }
-[data-theme="dark"] .tx-icon { background: rgba(0, 0, 0, 0.2); }
 .tx-icon.in { background: rgba(33,160,56,0.15); color: var(--accent); }
 .tx-icon.out { background: rgba(211,47,47,0.1); color: var(--danger); }
 .tx-info { flex: 1; }
@@ -184,20 +183,18 @@ body {
 
 .quick-replies { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .quick-reply { padding: 8px 14px; border-radius: 18px; background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border); font-size: 13px; color: var(--text); cursor: pointer; transition: all 0.2s; }
-[data-theme="dark"] .quick-reply { background: rgba(0, 0, 0, 0.2); }
 .quick-reply:active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: flex-end; justify-content: center; z-index: 200; backdrop-filter: blur(4px); }
 .modal { background: var(--bg); width: 100%; max-width: 480px; border-radius: 28px 28px 0 0; padding: 24px 20px 32px; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-/* Нижний док со свечением */
 .bottom-nav {
   position: fixed;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 32px);
+  width: calc(100% - 24px);
   max-width: 400px;
   background: var(--card);
   border: 1px solid var(--border);
@@ -205,12 +202,9 @@ body {
   display: flex;
   padding: 8px;
   z-index: 50;
-  box-shadow: var(--nav-glow); /* Применили свечение */
+  box-shadow: var(--nav-glow);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-}
-[data-theme="dark"] .bottom-nav {
-  background: rgba(26, 33, 26, 0.85);
 }
 .nav-item { flex: 1; text-align: center; font-size: 11px; color: var(--text-muted); cursor: pointer; padding: 8px 0; border-radius: 16px; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .nav-item .nav-icon { font-size: 22px; margin-bottom: 2px; transition: transform 0.2s; }
