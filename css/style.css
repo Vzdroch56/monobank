@@ -41,11 +41,11 @@ body {
   transition: background 0.3s, color 0.3s;
 }
 
-/* Уменьшили отступ сверху, чтобы карточка была ближе к шапке */
+/* Уменьшили верхний отступ (60px), чтобы карточка была выше */
 .app {
   width: 100%;
   max-width: 480px;
-  padding: 75px 10px 110px; 
+  padding: 60px 10px 120px; 
   position: relative;
 }
 
@@ -90,16 +90,16 @@ body {
 /* --- КАРТОЧКА БАЛАНСА --- */
 .balance-card {
   position: sticky;
-  top: 75px; 
+  top: 60px; /* Теперь она в 60 пикселях от верха (ближе к шапке) */
   z-index: 10;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(200, 205, 200, 0.6) 100%);
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow-active);
-  height: 270px; /* УВЕЛИЧИЛИ В 1.5 РАЗА */
+  height: 270px; 
+  transition: height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   margin-bottom: 16px;
-  will-change: height, top;
 }
 [data-theme="dark"] .balance-card {
   background: linear-gradient(135deg, rgba(26, 33, 26, 0.9) 0%, rgba(15, 20, 15, 0.7) 100%);
@@ -116,24 +116,38 @@ body {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%);
-  transition: transform 0.05s linear, font-size 0.05s linear;
+  transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   white-space: nowrap;
 }
 
-/* Изначальные позиции элементов (центрируем по всей высоте) */
-.balance-avatar { font-size: 52px; line-height: 1; margin-top: -40px; }
-.balance-label { font-size: 14px; color: var(--text-muted); position: absolute; top: 43%; left: 50%; transform: translate(-50%, -50%); transition: opacity 0.05s; }
-.balance-amount { font-size: 48px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); line-height: 1; margin-top: 35px; }
+.balance-avatar { font-size: 52px; line-height: 1; margin-top: -50px; }
+.balance-label { font-size: 14px; color: var(--text-muted); position: absolute; top: 42%; left: 50%; transform: translate(-50%, -50%); transition: all 0.3s; }
+.balance-amount { font-size: 48px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); line-height: 1; margin-top: 25px; }
 .balance-amount .cur { font-size: 24px; font-weight: 600; opacity: 0.6; }
-.balance-room-code { font-size: 13px; color: var(--text-muted); position: absolute; top: 80%; left: 50%; transform: translate(-50%, -50%); transition: opacity 0.05s; }
+.balance-room-code { font-size: 13px; color: var(--text-muted); position: absolute; top: 82%; left: 50%; transform: translate(-50%, -50%); transition: all 0.3s; }
 
+/* Сжатое состояние */
+.balance-card.compact {
+  height: 80px;
+  top: 50px;
+}
 .balance-card.compact .balance-label,
 .balance-card.compact .balance-room-code {
   opacity: 0;
 }
+.balance-card.compact .balance-avatar {
+  font-size: 26px;
+  margin-top: 0;
+  transform: translate(calc(-50% - 110px), -50%);
+}
+.balance-card.compact .balance-amount {
+  font-size: 24px;
+  letter-spacing: 0;
+  margin-top: 0;
+  transform: translate(calc(-50% + 110px), -50%);
+}
 
-/* --- НИЖНИЙ БАР (ЧУТЬ БОЛЬШЕ) --- */
+/* --- НИЖНИЙ БАР (ВЫШЕ, УВЕЛИЧЕН) --- */
 .bottom-nav {
   position: fixed;
   bottom: 20px;
@@ -141,39 +155,22 @@ body {
   transform: translateX(-50%);
   width: calc(100% - 24px);
   max-width: 400px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(200, 205, 200, 0.5) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(200, 205, 200, 0.6) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 26px;
   display: flex;
-  padding: 8px 6px; /* Чуть больше */
+  padding: 20px 12px; /* УВЕЛИЧИЛИ ВЫСОТУ БАРА */
   z-index: 50;
   box-shadow: var(--nav-glow);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
 [data-theme="dark"] .bottom-nav {
-  background: linear-gradient(135deg, rgba(26, 33, 26, 0.8) 0%, rgba(15, 20, 15, 0.6) 100%);
+  background: linear-gradient(135deg, rgba(26, 33, 26, 0.85) 0%, rgba(15, 20, 15, 0.65) 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
-.nav-item { 
-  flex: 1; 
-  text-align: center; 
-  font-size: 11px; 
-  color: var(--text-muted); 
-  cursor: pointer; 
-  padding: 4px 0; 
-  border-radius: 12px; 
-  transition: all 0.2s ease; 
-  display: flex; 
-  flex-direction: column; 
-  align-items: center; 
-  justify-content: center; 
-}
-.nav-item .nav-icon { 
-  font-size: 20px; /* Чуть больше */
-  margin-bottom: 2px; 
-  transition: transform 0.2s; 
-}
+.nav-item { flex: 1; text-align: center; font-size: 13px; color: var(--text-muted); cursor: pointer; padding: 4px 0; border-radius: 16px; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.nav-item .nav-icon { font-size: 26px; margin-bottom: 6px; transition: transform 0.2s; }
 .nav-item.active { color: var(--accent); font-weight: 600; }
 .nav-item.active .nav-icon { transform: scale(1.1) translateY(-2px); }
 
