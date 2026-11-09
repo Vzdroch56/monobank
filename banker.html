@@ -140,23 +140,17 @@
   <script src="js/ui.js"></script>
   <script src="js/banker.js?v=5"></script>
 <script>
-  let lastScrollY = window.scrollY;
   let ticking = false;
   const card = document.getElementById('mainBalanceCard');
-  const content = document.getElementById('mainContent');
-
+  
   window.addEventListener('scroll', () => {
-    lastScrollY = window.scrollY;
     if (!ticking) {
       window.requestAnimationFrame(() => {
         if (card) {
-          // Если прокрутили больше 30px
-          if (lastScrollY > 30) {
+          if (window.scrollY > 20) {
             card.classList.add('compact');
-            if (content) content.classList.add('compact');
           } else {
             card.classList.remove('compact');
-            if (content) content.classList.remove('compact');
           }
         }
         ticking = false;
