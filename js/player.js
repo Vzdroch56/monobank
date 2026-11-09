@@ -53,7 +53,7 @@ function renderPlayersList() {
         <div class="player-avatar">${p.avatar}</div>
         <div class="player-info">
           <div class="player-name">${esc(p.name)}</div>
-          <div class="player-balance">${fmtMoney(p.balance)} ₽</div>
+          <!-- Строка с балансом удалена -->
         </div>
         <button class="btn secondary" style="width:auto; padding:8px 12px; margin:0; font-size:13px;" 
           onclick="quickTransfer('${p.id}')">💸</button>
