@@ -104,11 +104,13 @@
 <script>
   let ticking = false;
   const card = document.getElementById('mainBalanceCard');
+  const avatar = card.querySelector('.balance-avatar');
+  const amount = card.querySelector('.balance-amount');
   
-  // Параметры анимации
-  const maxScroll = 150; // За сколько пикселей скролла карточка полностью свернется
-  const startHeight = 170; // Высота раскрытой карточки
-  const endHeight = 64;    // Высота свернутой карточки
+  // Настройки анимации
+  const maxScroll = 120; // За сколько пикселей прокрутки карточка полностью свернется
+  const startTop = 85;   // Начальный отступ сверху (25px от шапки)
+  const endTop = 75;     // Конечный отступ сверху (когда свернута)
 
   window.addEventListener('scroll', () => {
     if (!ticking) {
@@ -117,28 +119,44 @@
           const scrollY = window.scrollY;
           
           if (scrollY <= 0) {
-            // В самом верху — полная карточка
+            // В самом верху
             card.classList.remove('compact');
-            card.style.height = `${startHeight}px`;
-            card.style.top = '55px';
-          } else if (scrollY < maxScroll) {
-            // В процессе скролла — плавно уменьшаем
-            const progress = scrollY / maxScroll; // от 0 до 1
-            const currentHeight = startHeight - ((startHeight - endHeight) * progress);
+            card.style.height = '160px';
+            card.style.top = `${startTop}px`;
+            avatar.style.fontSize = '48px';
+            amount.style.fontSize = '46px';
+          } 
+          else if (scrollY < maxScroll) {
+            // В процессе скролла — вычисляем прогресс от 0 до 1
+            const progress = scrollY / maxScroll; 
             
+            // Плавно уменьшаем высоту с 160 до 64
+            const currentHeight = 160 - (96 * progress);
             card.style.height = `${currentHeight}px`;
-            card.style.top = `${55 - (5 * progress)}px`; // Чуть поднимаем вверх
             
-            // Класс compact нужен, чтобы элементы разъехались по сторонам
-            // Добавляем его, когда прогресс больше половины
+            // Плавно поднимаем карточку с 85 до 75
+            const currentTop = startTop - (10 * progress);
+            card.style.top = `${currentTop}px`;
+            
+            // Плавно уменьшаем аватарку с 48 до 26
+            const currentAvatarSize = 48 - (22 * progress);
+            avatar.style.fontSize = `${currentAvatarSize}px`;
+            
+            // Плавно уменьшаем баланс с 46 до 24
+            const currentAmountSize = 46 - (22 * progress);
+            amount.style.fontSize = `${currentAmountSize}px`;
+            
+            // Если прокрутили больше чем на 30%, добавляем класс для разъезда по краям
             if (progress > 0.3) card.classList.add('compact');
             else card.classList.remove('compact');
             
           } else {
             // Полностью свернута
             card.classList.add('compact');
-            card.style.height = `${endHeight}px`;
-            card.style.top = '50px';
+            card.style.height = '64px';
+            card.style.top = `${endTop}px`;
+            avatar.style.fontSize = '26px';
+            amount.style.fontSize = '24px';
           }
         }
         ticking = false;
