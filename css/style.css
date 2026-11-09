@@ -1,32 +1,37 @@
 :root {
   --bg: #f2f5f2;
-  --card: #ffffff;
+  --bg-gradient: linear-gradient(180deg, #e0e8e0 0%, #f2f5f2 100%);
+  --card: rgba(255, 255, 255, 0.75); /* Полупрозрачные карточки */
   --text: #0f1410;
   --text-muted: #6b756b;
   --accent: #21a038;
   --accent-dark: #178a2c;
-  --border: #e3e8e3;
+  --border: rgba(255, 255, 255, 0.5);
   --danger: #d32f2f;
   --radius: 20px;
-  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow: 0 8px 32px rgba(0,0,0,0.06);
+  --shadow-active: 0 8px 32px rgba(33,160,56,0.2);
 }
 
 [data-theme="dark"] {
   --bg: #0f1410;
-  --card: #1a211a;
+  --bg-gradient: linear-gradient(180deg, #1a241a 0%, #0f1410 100%);
+  --card: rgba(26, 33, 26, 0.7); /* Полупрозрачные карточки в темной теме */
   --text: #e8ede8;
   --text-muted: #8a968a;
   --accent: #2ecc47;
   --accent-dark: #25a83a;
-  --border: #2a332a;
-  --shadow: 0 2px 8px rgba(0,0,0,0.4);
+  --border: rgba(255, 255, 255, 0.08);
+  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --shadow-active: 0 8px 32px rgba(46,204,71,0.15);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: var(--bg);
+  background: var(--bg-gradient); /* Фон-градиент */
+  background-attachment: fixed;
   color: var(--text);
   min-height: 100vh;
   display: flex;
@@ -37,7 +42,7 @@ body {
 .app {
   width: 100%;
   max-width: 480px;
-  padding: 20px 16px 100px;
+  padding: 20px 16px 120px;
   position: relative;
 }
 
@@ -48,7 +53,7 @@ body {
   align-items: center;
   margin-bottom: 20px;
 }
-.topbar h1 { font-size: 20px; font-weight: 700; }
+.topbar h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
 .theme-toggle {
   background: var(--card);
   border: 1px solid var(--border);
@@ -57,20 +62,56 @@ body {
   font-size: 18px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
 }
+.theme-toggle:active { transform: scale(0.9); }
 
-/* Карточки */
+/* Стеклянные карточки */
 .card {
   background: var(--card);
   border-radius: var(--radius);
   padding: 20px;
   box-shadow: var(--shadow);
   margin-bottom: 16px;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(16px); /* Размытие фона под карточкой */
+  -webkit-backdrop-filter: blur(16px);
 }
 
-.balance-label { font-size: 14px; color: var(--text-muted); margin-bottom: 4px; }
-.balance-amount { font-size: 36px; font-weight: 800; letter-spacing: -1px; }
-.balance-amount .cur { font-size: 20px; font-weight: 600; color: var(--text-muted); }
+/* Карточка баланса (Серый градиент) */
+.balance-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(200, 205, 200, 0.4) 100%);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-active);
+}
+[data-theme="dark"] .balance-card {
+  background: linear-gradient(135deg, rgba(26, 33, 26, 0.8) 0%, rgba(15, 20, 15, 0.6) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Блик на карточке баланса */
+.balance-card::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 60%);
+  transform: rotate(30deg);
+  pointer-events: none;
+}
+[data-theme="dark"] .balance-card::before {
+  background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%);
+}
+
+.balance-label { font-size: 14px; color: var(--text-muted); margin-bottom: 4px; font-weight: 500; }
+.balance-amount { font-size: 42px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); }
+.balance-amount .cur { font-size: 24px; font-weight: 600; opacity: 0.6; }
 
 /* Кнопки */
 .btn {
@@ -78,52 +119,63 @@ body {
   width: 100%;
   padding: 16px;
   border: none;
-  border-radius: 14px;
+  border-radius: 16px;
   background: var(--accent);
   color: #fff;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
   margin-top: 12px;
+  box-shadow: 0 4px 12px rgba(33,160,56,0.3);
 }
-.btn:active { background: var(--accent-dark); }
+.btn:active { transform: scale(0.98); background: var(--accent-dark); box-shadow: none; }
 .btn.secondary {
   background: var(--card);
   color: var(--text);
   border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
 }
-.btn.danger { background: var(--danger); }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn.secondary:active { background: var(--bg); }
+.btn.danger { background: var(--danger); box-shadow: 0 4px 12px rgba(211,47,47,0.3); }
 
 /* Поля ввода */
 .field { margin-bottom: 14px; }
-.field label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
-.field input {
+.field label { display: block; font-size: 13px; color: var(--text-muted); margin-bottom: 6px; font-weight: 500; }
+.field input, .field select {
   width: 100%;
-  padding: 14px;
+  padding: 14px 16px;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--bg);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.4);
   color: var(--text);
   font-size: 16px;
   outline: none;
+  transition: all 0.2s;
+  backdrop-filter: blur(10px);
 }
-.field input:focus { border-color: var(--accent); }
+[data-theme="dark"] .field input, [data-theme="dark"] .field select {
+  background: rgba(0, 0, 0, 0.2);
+}
+.field input:focus, .field select:focus { border-color: var(--accent); background: rgba(255, 255, 255, 0.8); }
+[data-theme="dark"] .field input:focus, [data-theme="dark"] .field select:focus { background: rgba(0, 0, 0, 0.4); }
 
 /* Аватарки */
-.avatars { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.avatars { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; justify-content: center; }
 .avatar-option {
   width: 52px; height: 52px;
   border-radius: 50%;
-  background: var(--bg);
-  border: 2px solid var(--border);
+  background: rgba(255, 255, 255, 0.4);
+  border: 2px solid transparent;
   font-size: 26px;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  transition: border-color 0.2s, transform 0.1s;
+  transition: all 0.2s;
+  backdrop-filter: blur(10px);
 }
-.avatar-option.selected { border-color: var(--accent); transform: scale(1.05); }
+[data-theme="dark"] .avatar-option { background: rgba(0, 0, 0, 0.2); }
+.avatar-option.selected { border-color: var(--accent); transform: scale(1.1); background: var(--card); box-shadow: var(--shadow); }
 
 /* Список игроков */
 .player-row {
@@ -137,11 +189,12 @@ body {
 .player-avatar {
   width: 44px; height: 44px;
   border-radius: 50%;
-  background: var(--bg);
+  background: rgba(255, 255, 255, 0.4);
   display: flex; align-items: center; justify-content: center;
   font-size: 22px;
   flex-shrink: 0;
 }
+[data-theme="dark"] .player-avatar { background: rgba(0, 0, 0, 0.2); }
 .player-info { flex: 1; }
 .player-name { font-weight: 600; font-size: 15px; }
 .player-name .badge {
@@ -168,11 +221,12 @@ body {
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-size: 18px;
-  background: var(--bg);
+  background: rgba(255, 255, 255, 0.4);
   flex-shrink: 0;
 }
-.tx-icon.in { background: rgba(33,160,56,0.15); }
-.tx-icon.out { background: rgba(211,47,47,0.12); }
+[data-theme="dark"] .tx-icon { background: rgba(0, 0, 0, 0.2); }
+.tx-icon.in { background: rgba(33,160,56,0.15); color: var(--accent); }
+.tx-icon.out { background: rgba(211,47,47,0.1); color: var(--danger); }
 .tx-info { flex: 1; }
 .tx-title { font-size: 14px; font-weight: 600; }
 .tx-comment { font-size: 12px; color: var(--text-muted); }
@@ -190,62 +244,64 @@ body {
 .quick-reply {
   padding: 8px 14px;
   border-radius: 18px;
-  background: var(--bg);
+  background: rgba(255, 255, 255, 0.4);
   border: 1px solid var(--border);
   font-size: 13px;
   color: var(--text);
   cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(10px);
 }
-.quick-reply:active { background: var(--accent); color: #fff; }
+[data-theme="dark"] .quick-reply { background: rgba(0, 0, 0, 0.2); }
+.quick-reply:active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
 /* Модалка */
 .modal-overlay {
   position: fixed; inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.6);
   display: flex; align-items: flex-end; justify-content: center;
   z-index: 100;
+  backdrop-filter: blur(4px);
 }
 .modal {
-  background: var(--card);
+  background: var(--bg);
   width: 100%; max-width: 480px;
-  border-radius: 24px 24px 0 0;
+  border-radius: 28px 28px 0 0;
   padding: 24px 20px 32px;
-  animation: slideUp 0.25s ease;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-/* Нижняя навигация (Плавающий док) */
+/* Плавающий док (Нижняя навигация) */
 .bottom-nav {
   position: fixed;
-  bottom: 20px; /* Отступ от низа экрана */
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 32px); /* Отступы по бокам */
+  width: calc(100% - 32px);
   max-width: 400px;
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 24px; /* Закругления как у карточки */
+  border-radius: 24px;
   display: flex;
-  padding: 10px 12px;
+  padding: 8px;
   z-index: 50;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Тень, чтобы парил */
-  backdrop-filter: blur(10px); /* Эффект размытия (если фон прозрачный) */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
-
-/* Темная тема для дока */
 [data-theme="dark"] .bottom-nav {
-  background: rgba(26, 33, 26, 0.95); /* Чуть прозрачный для красоты */
-  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(26, 33, 26, 0.85);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .nav-item {
   flex: 1;
   text-align: center;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 6px 0;
+  padding: 8px 0;
   border-radius: 16px;
   transition: all 0.2s ease;
   display: flex;
@@ -253,29 +309,13 @@ body {
   align-items: center;
   justify-content: center;
 }
-
-.nav-item .nav-icon { 
-  font-size: 22px; 
-  margin-bottom: 2px;
-  transition: transform 0.2s;
-}
-
-/* Эффект нажатия / активной вкладки */
-.nav-item:active {
-  background: var(--bg);
-}
-
-.nav-item.active { 
-  color: var(--accent); 
-  font-weight: 600;
-}
-
-.nav-item.active .nav-icon {
-  transform: scale(1.1) translateY(-2px); /* Иконка чуть подпрыгивает */
-}
+.nav-item .nav-icon { font-size: 22px; margin-bottom: 2px; transition: transform 0.2s; }
+.nav-item:active { background: rgba(0,0,0,0.05); }
+[data-theme="dark"] .nav-item:active { background: rgba(255,255,255,0.05); }
+.nav-item.active { color: var(--accent); font-weight: 600; }
+.nav-item.active .nav-icon { transform: scale(1.1) translateY(-2px); }
 
 /* Тосты */
-/* Тосты (уведомления снизу) */
 .toast {
   position: fixed;
   bottom: 40px;
@@ -285,7 +325,7 @@ body {
   color: var(--text);
   padding: 16px 24px;
   border-radius: 16px;
-  font-size: 16px; /* Больше шрифт */
+  font-size: 16px;
   font-weight: 600;
   box-shadow: 0 8px 24px rgba(0,0,0,0.2);
   z-index: 1000;
@@ -294,19 +334,10 @@ body {
   text-align: center;
   animation: slideUpToast 0.3s ease;
   border-left: 4px solid var(--accent);
+  backdrop-filter: blur(16px);
 }
-
-.toast-sub {
-  font-size: 13px;
-  font-weight: 400;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
-
-@keyframes slideUpToast {
-  from { bottom: -100px; opacity: 0; }
-  to { bottom: 40px; opacity: 1; }
-}
+.toast-sub { font-size: 13px; font-weight: 400; color: var(--text-muted); margin-top: 4px; }
+@keyframes slideUpToast { from { bottom: -100px; opacity: 0; } to { bottom: 40px; opacity: 1; } }
 
 /* Код комнаты */
 .room-code {
@@ -328,37 +359,9 @@ body {
   border: 1px solid var(--border);
   font-size: 14px;
   cursor: pointer;
+  transition: 0.2s;
+  backdrop-filter: blur(10px);
 }
 .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
 .empty { text-align: center; color: var(--text-muted); padding: 30px 0; font-size: 14px; }
-
-/* Пуш-уведомления */
-.push-notification {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--card);
-  color: var(--text);
-  padding: 16px;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  width: 90%;
-  max-width: 400px;
-  z-index: 1000;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  border-left: 4px solid var(--accent);
-  animation: slideDownPush 0.3s ease;
-}
-.push-icon { font-size: 24px; }
-.push-content { flex: 1; }
-.push-title { font-weight: 700; font-size: 15px; margin-bottom: 2px; }
-.push-comment { font-size: 13px; color: var(--text-muted); }
-
-@keyframes slideDownPush {
-  from { top: -100px; opacity: 0; }
-  to { top: 20px; opacity: 1; }
-}
