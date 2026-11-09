@@ -68,40 +68,68 @@ function quickTransfer(targetId) {
 }
 
 // --- Рендер Истории ---
+// --- Рендер Истории ---
 function renderHistory() {
   const list = document.getElementById('historyList');
   
   if (!allTxs || allTxs.length === 0) { list.innerHTML = '<div class="empty">Пока нет операций</div>'; return; }
 
-  // Показываем ВСЕ операции без фильтрации, чтобы все видели, что происходит с Банком
-  list.innerHTML = allTxs.map(tx => {
+  // Фильтруем операции:
+  // 1. Показываем ВСЕ операции, где участвует Банк (зарплаты, штрафы, переводы в банк)
+  // 2. Показываем ЛИЧНЫЕ операции, где участвую Я (отправитель или получатель)
+  const visibleTxs = allTxs.filter(tx => {
+    const isBankOperation = tx.from_player === null || tx.to_player === null || 
+                            (tx.from_player && allPlayers.find(p => p.id === tx.from_player)?.is_bank_account) ||
+                            (tx.to_player && allPlayers.find(p => p.id === tx.to_player)?.is_bank_account);
+    
+    const isMyOperation = tx.from_player === session.player_id || tx.to_player === session.player_id;
+    
+    return isBankOperation || isMyOperation;
+  });
+
+  list.innerHTML = visibleTxs.map(tx => {
     const isIncoming = tx.to_player === session.player_id;
     const isOutgoing = tx.from_player === session.player_id;
     
     let title = '', icon = '', amountClass = '', sign = '';
-    
-    // Находим участников транзакции
     const fromP = tx.from_player ? allPlayers.find(p => p.id === tx.from_player) : null;
     const toP = tx.to_player ? allPlayers.find(p => p.id === tx.to_player) : null;
 
-    if (tx.from_player === null && isIncoming) {
+    if (isIncoming && (!fromP || fromP.is_bank_account)) {
       title = 'Пополнение от Банка'; icon = '🏦'; amountClass = 'in'; sign = '+';
-    } else if (isOutgoing && tx.to_player === null) {
+    } else if (isOutgoing && (!toP || toP.is_bank_account)) {
       title = 'Перевод в Банк'; icon = '🏦'; amountClass = 'out'; sign = '-';
     } else if (isIncoming) {
       title = fromP ? `От ${fromP.name}` : 'Перевод';
       icon = '↙️'; amountClass = 'in'; sign = '+';
     } else if (isOutgoing) {
-      if (toP && toP.is_bank_account) { title = 'В Банк'; icon = '🏦'; }
-      else { title = toP ? `Для ${toP.name}` : 'Перевод'; icon = '↗️'; }
-      amountClass = 'out'; sign = '-';
+      title = toP ? `Для ${toP.name}` : 'Перевод'; icon = '↗️'; amountClass = 'out'; sign = '-';
     } else {
-      // Если операция не наша и не в наш адрес — значит, это операция банка с кем-то другим
+      // Чужая операция с Банком
       if (!fromP && toP) { title = `Банк → ${toP.name}`; icon = '🏦'; amountClass = 'out'; }
       else if (fromP && !toP) { title = `${fromP.name} → Банк`; icon = '🏦'; amountClass = 'in'; }
-      else if (fromP && toP) { title = `${fromP.name} → ${toP.name}`; icon = '💸'; }
-      sign = ''; // Не ставим плюс/минус, так как это не наш баланс
+      sign = ''; 
     }
+
+    const commentHtml = tx.comment ? `<div class="tx-comment">${esc(tx.comment)}</div>` : '';
+    // Для чужих операций с банком делаем текст серым, чтобы не путать с личными
+    const isForeign = !isIncoming && !isOutgoing;
+    const colorStyle = isForeign ? 'color: var(--text-muted);' : '';
+
+    return `
+      <div class="tx-row">
+        <div class="tx-icon ${amountClass}">${icon}</div>
+        <div class="tx-info">
+          <div class="tx-title" style="${colorStyle}">${esc(title)}</div>
+          ${commentHtml}
+        </div>
+        <div class="tx-amount ${amountClass}" style="${colorStyle}">
+          ${sign}${fmtMoney(tx.amount)} ₽
+        </div>
+      </div>
+    `;
+  }).join('');
+}
 
     const commentHtml = tx.comment ? `<div class="tx-comment">${esc(tx.comment)}</div>` : '';
 
