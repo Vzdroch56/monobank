@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Монобанк — Банкир</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <h1>Банкир 🏦</h1>
+      <div style="display:flex; gap:8px;">
+        <button class="theme-toggle" onclick="showRoomInfo()" style="font-size:16px;">🔑</button>
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
+      </div>
+    </div>
+
+    <!-- Карточка баланса -->
+    <div class="card" style="text-align:center; position:relative; margin-bottom:16px;">
+      <div style="font-size:40px; margin-bottom:8px;" id="myAvatar">🐱</div>
+      <div class="balance-label" id="myName">Твой счёт</div>
+      <div class="balance-amount"><span id="myBalance">0</span> <span class="cur">₽</span></div>
+      <div style="font-size:13px; color:var(--text-muted); margin-top:8px;">Код: <b id="roomCode">—</b></div>
+    </div>
+
+    <!-- Кнопка перевода наверху -->
+    <button class="btn" onclick="openTransferModal()" style="margin-bottom:24px;">💸 Перевести деньги</button>
+
+    <!-- Вкладка 1: История -->
+    <div id="tabHistoryContent">
+      <div class="card">
+        <h3 style="margin-bottom:12px; font-size:16px;">Все операции в комнате</h3>
+        <div id="allHistoryList"><div class="empty">Загрузка...</div></div>
+      </div>
+    </div>
+
+    <!-- Вкладка 2: Игроки -->
+    <div id="tabPlayersContent" style="display:none;">
+      <div class="card">
+        <h3 style="margin-bottom:12px; font-size:16px;">Счета игроков</h3>
+        <div id="playersList"><div class="empty">Загрузка...</div></div>
+      </div>
+    </div>
+
+    <!-- Вкладка 3: Настройки -->
+    <div id="tabSettingsContent" style="display:none;">
+      <div class="card" style="text-align:center; padding:30px;">
+        <div style="font-size:48px; margin-bottom:16px;">⚙️</div>
+        <h3>Настройки</h3>
+        <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Код комнаты: <b id="settingsRoomCode">—</b></p>
+        <button class="btn secondary" onclick="logout()" style="color:var(--danger); border-color:var(--danger);">Выйти из комнаты</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Нижняя навигация -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="navHistory" onclick="switchTab('history')">
+      <span class="nav-icon">📋</span> Операции
+    </div>
+    <div class="nav-item" id="navPlayers" onclick="switchTab('players')">
+      <span class="nav-icon">👥</span> Игроки
+    </div>
+    <div class="nav-item" id="navSettings" onclick="switchTab('settings')">
+      <span class="nav-icon">⚙️</span> Настройки
+    </div>
+  </div>
+
+  <!-- Модалки остаются без изменений -->
+  <div class="modal-overlay" id="roomInfoModal" style="display:none;">
+    <div class="modal" style="text-align:center;">
+      <h3 style="margin-bottom:8px;">Доступ к игре</h3>
+      <p style="font-size:14px; color:var(--text-muted); margin-bottom:16px;">Дайте эту информацию друзьям:</p>
+      <div class="balance-label">Код комнаты</div>
+      <div class="room-code" id="modalRoomCode" style="font-size:32px; font-weight:800; letter-spacing:6px; color:var(--accent); margin:12px 0;">—</div>
+      <div class="balance-label">PIN</div>
+      <div class="room-code" id="modalRoomPin" style="font-size:32px; font-weight:800; letter-spacing:6px; color:var(--accent); margin:12px 0;">—</div>
+      <button class="btn" onclick="document.getElementById('roomInfoModal').style.display='none'">Закрыть</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="adjustModal" style="display:none;">
+    <div class="modal">
+      <h3 style="margin-bottom:16px;" id="adjustTitle">Корректировка</h3>
+      <div class="field">
+        <label>Сумма (минус — забрать в Банк, плюс — выдать из Банка)</label>
+        <input type="number" id="adjustAmount" placeholder="-500">
+      </div>
+      <div class="field">
+        <label>Комментарий</label>
+        <input type="text" id="adjustComment" placeholder="Штраф" maxlength="50">
+        <div class="quick-replies">
+          <div class="quick-reply" onclick="setAdjustComment('Штраф')">Штраф</div>
+          <div class="quick-reply" onclick="setAdjustComment('Зарплата')">Зарплата</div>
+        </div>
+      </div>
+      <button class="btn" onclick="submitAdjust()">Применить</button>
+      <button class="btn secondary" onclick="closeAdjustModal()">Отмена</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="transferModal" style="display:none;">
+    <div class="modal">
+      <h3 style="margin-bottom:16px;">Перевод (с личного счёта)</h3>
+      <div class="field">
+        <label>Кому перевести?</label>
+        <select id="transferTarget" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--border); background:var(--bg); color:var(--text); font-size:16px;"></select>
+      </div>
+      <div class="field">
+        <label>Сумма</label>
+        <input type="number" id="transferAmount" placeholder="0" min="1">
+      </div>
+      <div class="field">
+        <label>Комментарий</label>
+        <input type="text" id="transferComment" placeholder="Аренда" maxlength="50">
+        <div class="quick-replies">
+          <div class="quick-reply" onclick="setTransferComment('Аренда')">Аренда</div>
+          <div class="quick-reply" onclick="setTransferComment('Штраф')">Штраф</div>
+        </div>
+      </div>
+      <button class="btn" onclick="submitTransfer()">Перевести</button>
+      <button class="btn secondary" onclick="closeTransferModal()">Отмена</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/banker.js?v=5"></script>
+</body>
+</html>
