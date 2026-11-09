@@ -104,64 +104,15 @@
 <script>
   let ticking = false;
   const card = document.getElementById('mainBalanceCard');
-  const avatar = card.querySelector('.balance-avatar');
-  const amount = card.querySelector('.balance-amount');
   
-  const maxScroll = 150; // Скорость сжатия
-  const startTop = 75;
-  const endTop = 75;
-
   window.addEventListener('scroll', () => {
     if (!ticking) {
       window.requestAnimationFrame(() => {
         if (card) {
-          const scrollY = window.scrollY;
-          
-          if (scrollY <= 0) {
-            // Изначальное состояние (большая)
-            card.classList.remove('compact');
-            card.style.height = '270px';
-            card.style.top = `${startTop}px`;
-            
-            avatar.style.fontSize = '52px';
-            avatar.style.transform = 'translate(-50%, -50%)';
-            avatar.style.marginTop = '-40px';
-            
-            amount.style.fontSize = '48px';
-            amount.style.transform = 'translate(-50%, -50%)';
-            amount.style.marginTop = '35px';
-            
-          } 
-          else if (scrollY < maxScroll) {
-            const progress = scrollY / maxScroll; 
-            
-            card.style.height = `${270 - (190 * progress)}px`; // Плавно до 80px
-            card.style.top = `${startTop - (5 * progress)}px`;
-            
-            avatar.style.fontSize = `${52 - (26 * progress)}px`;
-            amount.style.fontSize = `${48 - (24 * progress)}px`;
-            
-            const shift = progress * 110; 
-            
-            avatar.style.marginTop = `${-40 + (40 * progress)}px`;
-            amount.style.marginTop = `${35 - (35 * progress)}px`;
-            
-            avatar.style.transform = `translate(calc(-50% - ${shift}px), -50%)`;
-            amount.style.transform = `translate(calc(-50% + ${shift}px), -50%)`;
-            
-          } else {
-            // Конечное состояние (маленькая)
+          if (window.scrollY > 30) {
             card.classList.add('compact');
-            card.style.height = '80px'; 
-            card.style.top = `${endTop}px`;
-            
-            avatar.style.fontSize = '26px';
-            avatar.style.marginTop = '0px';
-            avatar.style.transform = 'translate(calc(-50% - 110px), -50%)';
-            
-            amount.style.fontSize = '24px';
-            amount.style.marginTop = '0px';
-            amount.style.transform = 'translate(calc(-50% + 110px), -50%)';
+          } else {
+            card.classList.remove('compact');
           }
         }
         ticking = false;
