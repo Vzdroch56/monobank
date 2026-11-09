@@ -140,16 +140,21 @@
   <script src="js/ui.js"></script>
   <script src="js/banker.js?v=5"></script>
   <script>
+  let scrollTimeout;
   window.addEventListener('scroll', () => {
-    const card = document.getElementById('mainBalanceCard');
-    if (!card) return;
-    
-    // Если прокрутили больше 40 пикселей, сжимаем карточку
-    if (window.scrollY > 40) {
-      card.classList.add('compact');
-    } else {
-      card.classList.remove('compact');
-    }
+    // Дебаунс: ждем окончания скролла, чтобы избежать моргания
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      const card = document.getElementById('mainBalanceCard');
+      if (!card) return;
+      
+      // Если прокрутили больше 50 пикселей, сжимаем карточку
+      if (window.scrollY > 50) {
+        card.classList.add('compact');
+      } else {
+        card.classList.remove('compact');
+      }
+    }, 50); // Задержка 50 мс
   });
 </script>
 </body>
