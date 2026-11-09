@@ -41,11 +41,11 @@ body {
   transition: background 0.3s, color 0.3s;
 }
 
-/* МАКСИМАЛЬНО ПРИЖАЛИ К ШАПКЕ */
+/* Подняли карточку вверх */
 .app {
   width: 100%;
   max-width: 480px;
-  padding: 58px 10px 100px; /* Уменьшили до 58px */
+  padding: 58px 10px 100px; 
   position: relative;
 }
 
@@ -56,7 +56,7 @@ body {
   transform: translateX(-50%);
   width: 100%;
   max-width: 480px;
-  padding: 12px 20px; /* Уменьшили высоту шапки */
+  padding: 12px 20px;
   z-index: 100;
   display: flex;
   justify-content: space-between;
@@ -87,10 +87,10 @@ body {
   -webkit-backdrop-filter: blur(16px);
 }
 
-/* --- КАРТОЧКА БАЛАНСА (ПЛАВНОЕ ПОЯВЛЕНИЕ БЕЗ ДВИЖЕНИЙ) --- */
+/* --- КАРТОЧКА БАЛАНСА --- */
 .balance-card {
   position: sticky;
-  top: 58px; /* Прилипает вплотную к шапке */
+  top: 58px; /* Вплотную к шапке */
   z-index: 10;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(200, 205, 200, 0.6) 100%);
   border: 1px solid rgba(255, 255, 255, 0.8);
@@ -112,67 +112,35 @@ body {
   height: 100%;
 }
 
-/* Базовые стили для элементов */
+/* Элементы в центре */
 .balance-avatar, .balance-amount {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  transition: all 0.3s ease;
+  transition: opacity 0.3s ease; /* Плавно исчезают/появляются */
   white-space: nowrap;
 }
 
 .balance-avatar { font-size: 52px; line-height: 1; margin-top: -40px; z-index: 2; }
-.balance-label { font-size: 14px; color: var(--text-muted); position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); transition: all 0.3s ease; }
+.balance-label { font-size: 14px; color: var(--text-muted); position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); transition: opacity 0.3s ease; }
 .balance-amount { font-size: 48px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); line-height: 1; margin-top: 35px; z-index: 1; }
 .balance-amount .cur { font-size: 24px; font-weight: 600; opacity: 0.6; }
-.balance-room-code { font-size: 13px; color: var(--text-muted); position: absolute; top: 80%; left: 50%; transform: translate(-50%, -50%); transition: all 0.3s ease; }
+.balance-room-code { font-size: 13px; color: var(--text-muted); position: absolute; top: 80%; left: 50%; transform: translate(-50%, -50%); transition: opacity 0.3s ease; }
 
-/* --- СЖАТОЕ СОСТОЯНИЕ (ПРОСТО ИСЧЕЗАЮТ В ЦЕНТРЕ И ПОЯВЛЯЮТСЯ ПО КРАЯМ) --- */
+/* --- СЖАТОЕ СОСТОЯНИЕ (ПРОСТО ИСЧЕЗАЮТ) --- */
 .balance-card.compact {
   height: 80px;
-  top: 58px;
 }
-
-/* Прячем центральные элементы */
 .balance-card.compact .balance-label,
-.balance-card.compact .balance-room-code {
-  opacity: 0;
-}
-.balance-card.compact .balance-avatar {
-  opacity: 0; 
-  transform: translate(-50%, -50%); /* Без движений */
-}
+.balance-card.compact .balance-room-code,
+.balance-card.compact .balance-avatar,
 .balance-card.compact .balance-amount {
-  opacity: 0;
-  transform: translate(-50%, -50%); /* Без движений */
-}
-
-/* Создаем ДУБЛИКАТЫ для боковых элементов, которые появляются из прозрачности */
-.balance-card::after {
-  content: attr(data-avatar) '   ' attr(data-amount);
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 100%;
-  transform: translateY(-50%);
-  padding: 0 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 800;
-  font-size: 24px;
-  opacity: 0; /* Изначально невидимы */
-  transition: opacity 0.3s ease;
-  color: var(--text);
+  opacity: 0; /* Всё исчезает */
   pointer-events: none;
 }
 
-.balance-card.compact::after {
-  opacity: 1; /* Проявляются при сжатии */
-}
-
-/* --- НИЖНИЙ БАР (ВЕРНУЛИ В КОМПАКТНОЕ СОСТОЯНИЕ) --- */
+/* --- НИЖНИЙ БАР (КОМПАКТНЫЙ) --- */
 .bottom-nav {
   position: fixed;
   bottom: 20px;
@@ -184,7 +152,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 24px;
   display: flex;
-  padding: 8px 6px; /* Вернули компактность */
+  padding: 8px 6px; /* Компактный размер */
   z-index: 50;
   box-shadow: var(--nav-glow);
   backdrop-filter: blur(20px);
