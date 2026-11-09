@@ -139,7 +139,7 @@
   <script src="js/supabase-client.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/banker.js?v=5"></script>
- <script>
+<script>
   let lastScrollY = window.scrollY;
   let ticking = false;
   const card = document.getElementById('mainBalanceCard');
@@ -149,21 +149,15 @@
     if (!ticking) {
       window.requestAnimationFrame(() => {
         if (card) {
-          // Если прокрутили больше 20px, начинаем сжимать
           if (lastScrollY > 20) {
             card.classList.add('compact');
-            
-            // Плавно уменьшаем отступ сверху карточки в зависимости от скролла
-            const scrollProgress = Math.min(lastScrollY - 20, 50); // максимум 50px сдвига
-            const topOffset = 76 - (scrollProgress * 0.5); 
+            // Плавно уменьшаем отступ (с 76px до 66px)
+            const scrollProgress = Math.min(lastScrollY - 20, 50); 
+            const topOffset = 76 - (scrollProgress * 0.2); 
             card.style.top = `${topOffset}px`;
-            
-            // Уменьшаем прозрачность тени
-            card.style.boxShadow = `0 ${8 - (scrollProgress * 0.1)}px 32px rgba(33,160,56,${0.25 - (scrollProgress * 0.004)})`;
           } else {
             card.classList.remove('compact');
             card.style.top = '76px';
-            card.style.boxShadow = 'var(--shadow-active)';
           }
         }
         ticking = false;
