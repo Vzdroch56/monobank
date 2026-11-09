@@ -1,7 +1,7 @@
 :root {
   --bg: #f2f5f2;
-  /* Сделали градиент длиннее и плавнее */
-  --bg-gradient: linear-gradient(180deg, #e2e8e2 0%, #f2f5f2 40%, #f2f5f2 100%);
+  /* Плавный радиальный градиент сверху */
+  --bg-gradient: radial-gradient(ellipse at top, #e2e8e2 0%, #f2f5f2 60%, #f2f5f2 100%);
   --card: rgba(255, 255, 255, 0.75);
   --text: #0f1410;
   --text-muted: #6b756b;
@@ -17,7 +17,7 @@
 
 [data-theme="dark"] {
   --bg: #0f1410;
-  --bg-gradient: linear-gradient(180deg, #141c14 0%, #0f1410 40%, #0f1410 100%);
+  --bg-gradient: radial-gradient(ellipse at top, #141c14 0%, #0f1410 60%, #0f1410 100%);
   --card: rgba(26, 33, 26, 0.75);
   --text: #e8ede8;
   --text-muted: #8a968a;
@@ -42,7 +42,6 @@ body {
   transition: background 0.3s, color 0.3s;
 }
 
-/* Сделали карточки шире (боковые отступы 10px) */
 .app {
   width: 100%;
   max-width: 480px;
@@ -62,12 +61,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: var(--bg);
+  background: transparent; /* Шапка прозрачная, чтобы градиент был виден */
   transition: background 0.3s;
-  box-shadow: 0 4px 20px -10px rgba(0,0,0,0.1);
-}
-[data-theme="dark"] .fixed-header {
-  box-shadow: 0 4px 20px -10px rgba(0,0,0,0.5);
 }
 .fixed-header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
 .theme-toggle {
@@ -97,50 +92,68 @@ body {
 .balance-card {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(200, 205, 200, 0.6) 100%);
   border: 1px solid rgba(255, 255, 255, 0.8);
-  text-align: center;
   position: sticky;
-  /* Отступ сверху равен отступу до кнопки снизу (margin-bottom 12px + запас) */
   top: 76px; 
   z-index: 10;
   overflow: hidden;
   box-shadow: var(--shadow-active);
-  /* Убрали transition, так как теперь управляем через JS */
-  will-change: transform, padding, height;
+  will-change: transform;
+  /* Жестко фиксируем высоту, чтобы карточка не прыгала */
+  height: 170px; 
 }
 [data-theme="dark"] .balance-card {
   background: linear-gradient(135deg, rgba(26, 33, 26, 0.9) 0%, rgba(15, 20, 15, 0.7) 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Сделали карточку чуть выше (130px) */
+/* Контейнер с абсолютным позиционированием */
 .balance-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 130px; 
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Элементы позиционируются абсолютно, чтобы плавно двигаться */
+.balance-avatar, .balance-label, .balance-amount, .balance-room-code {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   transition: all 0.1s linear;
+  text-align: center;
+  white-space: nowrap;
 }
 
-.balance-avatar { font-size: 44px; line-height: 1; margin-bottom: 10px; transition: all 0.1s linear; }
-.balance-label { font-size: 14px; color: var(--text-muted); margin-bottom: 4px; transition: all 0.1s linear; }
-.balance-amount { font-size: 44px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); transition: all 0.1s linear; }
+/* Изначальное положение (центр) */
+.balance-avatar { top: 20px; font-size: 44px; line-height: 1; }
+.balance-label { top: 74px; font-size: 14px; color: var(--text-muted); }
+.balance-amount { top: 92px; font-size: 44px; font-weight: 800; letter-spacing: -1.5px; color: var(--text); }
 .balance-amount .cur { font-size: 24px; font-weight: 600; opacity: 0.6; }
-.balance-room-code { font-size: 13px; color: var(--text-muted); margin-top: 6px; transition: all 0.1s linear; }
+.balance-room-code { top: 144px; font-size: 13px; color: var(--text-muted); }
 
-/* Класс, который будет вешать JS при скролле */
+/* Сжатое состояние (разъезжаются по сторонам) */
 .balance-card.compact {
-  padding: 10px 16px;
+  height: 60px; /* Уменьшаем высоту карточки */
+  top: 66px;
 }
-.balance-card.compact .balance-inner {
-  flex-direction: row;
-  justify-content: space-between;
-  height: 44px;
+.balance-card.compact .balance-avatar {
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 26px;
 }
-.balance-card.compact .balance-avatar { font-size: 24px; margin: 0; }
-.balance-card.compact .balance-label, 
-.balance-card.compact .balance-room-code { display: none; }
-.balance-card.compact .balance-amount { font-size: 22px; margin: 0; letter-spacing: 0; }
+.balance-card.compact .balance-amount {
+  left: auto;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 22px;
+  letter-spacing: 0;
+}
+.balance-card.compact .balance-label,
+.balance-card.compact .balance-room-code {
+  opacity: 0;
+  pointer-events: none;
+}
 
 /* Остальные стили */
 .btn { display: block; width: 100%; padding: 16px; border: none; border-radius: 16px; background: var(--accent); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 12px; box-shadow: 0 4px 12px rgba(33,160,56,0.3); }
@@ -186,7 +199,7 @@ body {
 .modal { background: var(--bg); width: 100%; max-width: 480px; border-radius: 28px 28px 0 0; padding: 24px 20px 32px; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-/* --- НИЖНИЙ БАР (ЭФФЕКТ СТЕКЛА) --- */
+/* --- НИЖНИЙ БАР --- */
 .bottom-nav {
   position: fixed;
   bottom: 20px;
@@ -194,7 +207,6 @@ body {
   transform: translateX(-50%);
   width: calc(100% - 24px);
   max-width: 400px;
-  /* Применили полупрозрачный градиент как на карточке */
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(200, 205, 200, 0.5) 100%);
   border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 24px;
@@ -209,7 +221,6 @@ body {
   background: linear-gradient(135deg, rgba(26, 33, 26, 0.8) 0%, rgba(15, 20, 15, 0.6) 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 .nav-item { flex: 1; text-align: center; font-size: 11px; color: var(--text-muted); cursor: pointer; padding: 8px 0; border-radius: 16px; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .nav-item .nav-icon { font-size: 22px; margin-bottom: 2px; transition: transform 0.2s; }
 .nav-item.active { color: var(--accent); font-weight: 600; }
